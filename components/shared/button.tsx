@@ -10,7 +10,7 @@ type ButtonProps = {
 };
 
 const baseClasses =
-  'inline-flex items-center justify-center px-6 py-2 font-bold uppercase border-[3px] border-black shadow-brutal-sm transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none';
+  'inline-flex items-center justify-center px-6 py-2 font-bold uppercase border-[3px] border-black shadow-brutal-sm transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm';
 
 const variants = {
   primary: 'bg-primary text-ink',

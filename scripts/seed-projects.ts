@@ -71,6 +71,44 @@ async function main() {
         { type: 'text', sort: 1, content: { content: 'Progress: Frame complete, electronics in progress. Next step is calibration and first cuts.' } },
       ],
     },
+    {
+      title: 'NGO Irrigation Automation',
+      slug: 'ngo-irrigation-automation',
+      thumbnail: thumbnailId,
+      start_date: '2024-02-01',
+      end_date: '2024-05-15',
+      status: 'completed',
+      short_summary:
+        'Automated irrigation system for a permaculture NGO, using soil sensors and low-cost microcontrollers.',
+      context: 'NGO',
+      domains: ['hardware', 'software', 'agritech', 'automation'],
+      content_blocks: [
+        {
+          type: 'text',
+          sort: 0,
+          content: {
+            content:
+              'Designed and deployed an automated irrigation system for a local permaculture NGO. The goal was to reduce water waste while ensuring plants get adequate moisture during dry spells.',
+          },
+        },
+        {
+          type: 'text',
+          sort: 1,
+          content: {
+            content:
+              'Tech stack: ESP32 for sensor nodes, capacitive soil moisture sensors, MQTT for communication, and a simple dashboard for monitoring. All components chosen for low cost and ease of repair.',
+          },
+        },
+        {
+          type: 'callout',
+          sort: 2,
+          content: {
+            content: 'Key outcome: 40% reduction in water usage while improving plant health.',
+            callout_type: 'success',
+          },
+        },
+      ],
+    },
   ];
 
   try {
@@ -96,6 +134,8 @@ async function main() {
     console.error(error);
   }
 
+  const projectIdsBySlug: Record<string, string | number> = {};
+
   for (const p of projects) {
     const existingProject = (await client.request(
       readItems('projects', {
@@ -103,7 +143,7 @@ async function main() {
         fields: ['id'],
         limit: 1,
       } as never)
-    )) as { id: string }[];
+    )) as { id: string | number }[];
 
     const { content_blocks, ...projectData } = p;
     const created = existingProject[0]
@@ -111,6 +151,8 @@ async function main() {
       : ((await client.request(createItem('projects', projectData as never))) as {
           id: string | number;
         });
+
+    projectIdsBySlug[p.slug] = created.id;
 
     if (existingProject[0]?.id) {
       console.log('Project already exists, adding missing blocks:', p.slug);
@@ -142,6 +184,37 @@ async function main() {
       );
       console.log('  Added block', i + 1);
     }
+  }
+
+  const existingBlog = (await client.request(
+    readItems('blog_posts', {
+      filter: { slug: { _eq: 'why-agricultural-automation' } },
+      fields: ['id'],
+      limit: 1,
+    } as never)
+  )) as { id: string | number }[];
+
+  if (existingBlog.length === 0) {
+    const ngoId = projectIdsBySlug['ngo-irrigation-automation'];
+    await client.request(
+      createItem('blog_posts', {
+        title: 'Why I\'m interested in agricultural automation',
+        slug: 'why-agricultural-automation',
+        published_date: '2024-06-01',
+        summary:
+          'A reflection on how hardware, software, and sustainable systems intersect in agritech.',
+        body: `Agriculture is one of the oldest human endeavors, yet it's ripe for innovation. From soil sensors to automated irrigation, small changes can have outsized impact—especially for NGOs and community projects working with limited resources.
+
+In my [NGO irrigation project](/projects/ngo-irrigation-automation), I saw firsthand how low-cost microcontrollers and simple sensors could reduce water waste while improving outcomes. The key was choosing technology that local teams could maintain and extend.
+
+I'm excited to keep exploring this space: agritech, permaculture principles in system design, and automation that serves people rather than replacing them.`,
+        is_draft: false,
+        linked_projects: ngoId ? [ngoId] : [],
+      } as never)
+    );
+    console.log('Created blog post: Why I\'m interested in agricultural automation');
+  } else {
+    console.log('Blog post already exists, skipping');
   }
 
   console.log('\nDone. Visit http://localhost:3000/projects to see the projects.');

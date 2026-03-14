@@ -13,7 +13,7 @@ export function ProjectCard({ project }: Props) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="block border-[3px] border-black bg-surface shadow-brutal-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+      className="block border-[3px] border-black bg-surface shadow-brutal-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
     >
       <div className="relative aspect-video overflow-hidden border-b-[3px] border-black">
         <Image

@@ -27,10 +27,20 @@
    DIRECTUS_URL=http://localhost:8055 ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=admin npm run directus:schema
    ```
 
+## Schema Source of Truth
+
+The live instance is provisioned via `scripts/directus-schema-setup.ts`. That script creates:
+- `projects.id` and `content_blocks.project_id` as **integer** (auto-increment)
+- M2M relations: `projects_tags`, `blog_posts_tags`, `blog_posts_projects`
+
+The `directus-schema.json` file is aligned with this setup. Use the setup script for new instances.
+
 ## Environment Variables
 
 See `.env.example` for required variables. Key ones:
 
 - `DIRECTUS_URL` / `NEXT_PUBLIC_DIRECTUS_URL` - Directus instance URL
-- `ADMIN_EMAIL` / `ADMIN_PASSWORD` - For schema setup script
+- `ADMIN_EMAIL` / `ADMIN_PASSWORD` (or `DIRECTUS_EMAIL` / `DIRECTUS_PASSWORD`) - For schema setup script and **app data fetching**. The Next.js app logs in with these credentials to read projects, blog posts, and profile. Without them, you may see 403 errors and empty content.
 - `DB_PASSWORD` - PostgreSQL password (use a strong value in production)
+
+**For local development:** Copy `.env.example` to `.env.local` and set `ADMIN_EMAIL` and `ADMIN_PASSWORD` to match your Directus admin user.

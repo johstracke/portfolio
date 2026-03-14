@@ -64,7 +64,7 @@ export function FilterSidebar({
         <select
           value={selectedDomain ?? ''}
           onChange={(event) => updateParam('domain', event.target.value)}
-          className="w-full border-[3px] border-black bg-background px-3 py-2"
+          className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         >
           <option value="">All domains</option>
           {domains.map((domain) => (
@@ -80,7 +80,7 @@ export function FilterSidebar({
         <select
           value={selectedStatus ?? ''}
           onChange={(event) => updateParam('status', event.target.value)}
-          className="w-full border-[3px] border-black bg-background px-3 py-2"
+          className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         >
           <option value="">All statuses</option>
           {statuses.map((status) => (
@@ -96,7 +96,7 @@ export function FilterSidebar({
         <select
           value={selectedTag ?? ''}
           onChange={(event) => updateParam('tag', event.target.value)}
-          className="w-full border-[3px] border-black bg-background px-3 py-2"
+          className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         >
           <option value="">All tags</option>
           {tags.map((tag) => (
@@ -110,7 +110,7 @@ export function FilterSidebar({
       <button
         type="button"
         onClick={clearFilters}
-        className="w-full border-[3px] border-black bg-secondary px-4 py-2 text-sm font-bold uppercase text-white shadow-brutal-sm transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+        className="w-full border-[3px] border-black bg-secondary px-4 py-2 text-sm font-bold uppercase text-white shadow-brutal-sm transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
       >
         Clear Filters
       </button>

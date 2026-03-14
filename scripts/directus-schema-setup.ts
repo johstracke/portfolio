@@ -299,84 +299,104 @@ async function main() {
     schema: {},
   });
 
+  // M2M junctions: create junction collection + FK fields first, then relations
   console.log('\nCreating M2M: projects <-> tags...');
+  await ensureCollection('projects_tags', { hidden: true, icon: 'import_export' });
+  await ensureField('projects_tags', 'projects_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'projects', foreign_key_column: 'id' },
+  });
+  await ensureField('projects_tags', 'tags_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'tags', foreign_key_column: 'id' },
+  });
   try {
-    await client.request(
-      createRelation({
-        collection: 'projects_tags',
-        field: 'projects_id',
-        related_collection: 'projects',
-        meta: { many_collection: 'projects_tags', many_field: 'projects_id', one_collection: 'projects', one_field: 'tags', one_allowed_collections: null, junction_field: 'tags_id', sort_field: null },
-        schema: { table: 'projects_tags', column: 'projects_id', foreign_key_table: 'projects', foreign_key_column: 'id' },
-      } as never)
-    );
-    await client.request(
-      createRelation({
-        collection: 'projects_tags',
-        field: 'tags_id',
-        related_collection: 'tags',
-        meta: { many_collection: 'projects_tags', many_field: 'tags_id', one_collection: 'tags', one_field: null, one_allowed_collections: null, junction_field: 'projects_id', sort_field: null },
-        schema: { table: 'projects_tags', column: 'tags_id', foreign_key_table: 'tags', foreign_key_column: 'id' },
-      } as never)
-    );
-    console.log('  Created projects_tags junction');
+    await client.request(createRelation({ collection: 'projects_tags', field: 'projects_id', related_collection: 'projects', meta: { many_collection: 'projects_tags', many_field: 'projects_id', one_collection: 'projects', one_field: 'tags', junction_field: 'tags_id' }, schema: { table: 'projects_tags', column: 'projects_id', foreign_key_table: 'projects', foreign_key_column: 'id' } } as never));
+    await client.request(createRelation({ collection: 'projects_tags', field: 'tags_id', related_collection: 'tags', meta: { many_collection: 'projects_tags', many_field: 'tags_id', one_collection: 'tags', one_field: null, junction_field: 'projects_id' }, schema: { table: 'projects_tags', column: 'tags_id', foreign_key_table: 'tags', foreign_key_column: 'id' } } as never));
+    console.log('  Created projects_tags relations');
   } catch (e: unknown) {
-    const err = e as { errors?: { message?: string }[] };
-    if (!err?.errors?.[0]?.message?.includes('already exists')) console.error('  projects_tags:', err);
+    const msg = (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ?? '';
+    if (!msg.includes('already exists')) console.error('  projects_tags relations:', msg);
+    else console.log('  projects_tags relations already exist');
   }
 
   console.log('\nCreating M2M: blog_posts <-> tags...');
+  await ensureCollection('blog_posts_tags', { hidden: true, icon: 'import_export' });
+  await ensureField('blog_posts_tags', 'blog_posts_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'blog_posts', foreign_key_column: 'id' },
+  });
+  await ensureField('blog_posts_tags', 'tags_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'tags', foreign_key_column: 'id' },
+  });
   try {
-    await client.request(
-      createRelation({
-        collection: 'blog_posts_tags',
-        field: 'blog_posts_id',
-        related_collection: 'blog_posts',
-        meta: { many_collection: 'blog_posts_tags', many_field: 'blog_posts_id', one_collection: 'blog_posts', one_field: 'tags', one_allowed_collections: null, junction_field: 'tags_id', sort_field: null },
-        schema: { table: 'blog_posts_tags', column: 'blog_posts_id', foreign_key_table: 'blog_posts', foreign_key_column: 'id' },
-      } as never)
-    );
-    await client.request(
-      createRelation({
-        collection: 'blog_posts_tags',
-        field: 'tags_id',
-        related_collection: 'tags',
-        meta: { many_collection: 'blog_posts_tags', many_field: 'tags_id', one_collection: 'tags', one_field: null, one_allowed_collections: null, junction_field: 'blog_posts_id', sort_field: null },
-        schema: { table: 'blog_posts_tags', column: 'tags_id', foreign_key_table: 'tags', foreign_key_column: 'id' },
-      } as never)
-    );
-    console.log('  Created blog_posts_tags junction');
+    await client.request(createRelation({ collection: 'blog_posts_tags', field: 'blog_posts_id', related_collection: 'blog_posts', meta: { many_collection: 'blog_posts_tags', many_field: 'blog_posts_id', one_collection: 'blog_posts', one_field: 'tags', junction_field: 'tags_id' }, schema: { table: 'blog_posts_tags', column: 'blog_posts_id', foreign_key_table: 'blog_posts', foreign_key_column: 'id' } } as never));
+    await client.request(createRelation({ collection: 'blog_posts_tags', field: 'tags_id', related_collection: 'tags', meta: { many_collection: 'blog_posts_tags', many_field: 'tags_id', one_collection: 'tags', one_field: null, junction_field: 'blog_posts_id' }, schema: { table: 'blog_posts_tags', column: 'tags_id', foreign_key_table: 'tags', foreign_key_column: 'id' } } as never));
+    console.log('  Created blog_posts_tags relations');
   } catch (e: unknown) {
-    const err = e as { errors?: { message?: string }[] };
-    if (!err?.errors?.[0]?.message?.includes('already exists')) console.error('  blog_posts_tags:', err);
+    const msg = (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ?? '';
+    if (!msg.includes('already exists')) console.error('  blog_posts_tags relations:', msg);
+    else console.log('  blog_posts_tags relations already exist');
   }
 
   console.log('\nCreating M2M: blog_posts <-> projects...');
+  await ensureCollection('blog_posts_projects', { hidden: true, icon: 'import_export' });
+  await ensureField('blog_posts_projects', 'blog_posts_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'blog_posts', foreign_key_column: 'id' },
+  });
+  await ensureField('blog_posts_projects', 'projects_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'projects', foreign_key_column: 'id' },
+  });
   try {
-    await client.request(
-      createRelation({
-        collection: 'blog_posts_projects',
-        field: 'blog_posts_id',
-        related_collection: 'blog_posts',
-        meta: { many_collection: 'blog_posts_projects', many_field: 'blog_posts_id', one_collection: 'blog_posts', one_field: 'linked_projects', one_allowed_collections: null, junction_field: 'projects_id', sort_field: null },
-        schema: { table: 'blog_posts_projects', column: 'blog_posts_id', foreign_key_table: 'blog_posts', foreign_key_column: 'id' },
-      } as never)
-    );
-    await client.request(
-      createRelation({
-        collection: 'blog_posts_projects',
-        field: 'projects_id',
-        related_collection: 'projects',
-        meta: { many_collection: 'blog_posts_projects', many_field: 'projects_id', one_collection: 'projects', one_field: null, one_allowed_collections: null, junction_field: 'blog_posts_id', sort_field: null },
-        schema: { table: 'blog_posts_projects', column: 'projects_id', foreign_key_table: 'projects', foreign_key_column: 'id' },
-      } as never)
-    );
-    console.log('  Created blog_posts_projects junction');
+    await client.request(createRelation({ collection: 'blog_posts_projects', field: 'blog_posts_id', related_collection: 'blog_posts', meta: { many_collection: 'blog_posts_projects', many_field: 'blog_posts_id', one_collection: 'blog_posts', one_field: 'linked_projects', junction_field: 'projects_id' }, schema: { table: 'blog_posts_projects', column: 'blog_posts_id', foreign_key_table: 'blog_posts', foreign_key_column: 'id' } } as never));
+    await client.request(createRelation({ collection: 'blog_posts_projects', field: 'projects_id', related_collection: 'projects', meta: { many_collection: 'blog_posts_projects', many_field: 'projects_id', one_collection: 'projects', one_field: null, junction_field: 'blog_posts_id' }, schema: { table: 'blog_posts_projects', column: 'projects_id', foreign_key_table: 'projects', foreign_key_column: 'id' } } as never));
+    console.log('  Created blog_posts_projects relations');
   } catch (e: unknown) {
-    const err = e as { errors?: { message?: string }[] };
-    const msg = err?.errors?.[0]?.message ?? '';
-    if (!msg.includes('already exists')) console.error('  blog_posts_projects:', e);
+    const msg = (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ?? '';
+    if (!msg.includes('already exists')) console.error('  blog_posts_projects relations:', msg);
+    else console.log('  blog_posts_projects relations already exist');
   }
+
+  // Create alias fields on the "one" side of each M2M with correct junctionField option
+  console.log('\nCreating M2M alias fields...');
+  const ensureAliasField = async (
+    collection: string,
+    field: string,
+    junctionField: string,
+    template: string
+  ) => {
+    try {
+      await client.request(
+        createField(collection as never, {
+          field,
+          type: 'alias' as never,
+          meta: {
+            interface: 'list-m2m',
+            special: ['m2m'],
+            options: { junctionField, template, allowDuplicates: false },
+          },
+          schema: null,
+        })
+      );
+      console.log('  Created alias field', `${collection}.${field}`);
+    } catch (e: unknown) {
+      const msg = (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ?? '';
+      if (msg.includes('already exists')) console.log('  Alias field', `${collection}.${field}`, 'already exists');
+      else console.error('  Error creating', `${collection}.${field}:`, msg);
+    }
+  };
+  await ensureAliasField('projects', 'tags', 'tags_id', '{{tags_id.name}}');
+  await ensureAliasField('blog_posts', 'tags', 'tags_id', '{{tags_id.name}}');
+  await ensureAliasField('blog_posts', 'linked_projects', 'projects_id', '{{projects_id.title}}');
 
   console.log('\nSchema setup complete. Export with: npx directus schema snapshot ./directus-schema.json');
 }

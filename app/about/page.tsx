@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { Badge } from '@/components/shared/badge';
 import { Button } from '@/components/shared/button';
 import { PlainTextContent } from '@/components/shared/plain-text-content';
 import { getProfile, getProjects } from '@/lib/directus';
+
+export const metadata: Metadata = {
+  title: 'About',
+  description: 'Personal story, context, and capabilities.',
+};
 
 export default async function AboutPage() {
   const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
@@ -10,12 +16,13 @@ export default async function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <section className="mb-12 max-w-3xl">
-        <h1 className="mb-6 text-4xl font-bold md:text-5xl">About</h1>
+        <h1 className="font-display mb-6 text-4xl font-bold md:text-5xl">About</h1>
         <PlainTextContent
           content={
             profile?.bio ??
             'I build across hardware, software, and sustainable systems, with a focus on learning in public and shipping practical work.'
           }
+          markdown
           className="space-y-4 text-lg leading-8 text-ink/85"
         />
       </section>

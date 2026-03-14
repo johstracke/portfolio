@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { getProjects } from '@/lib/directus';
 import { FilterSidebar } from '@/components/filters/filter-sidebar';
 import { SearchBar } from '@/components/filters/search-bar';
 import { ProjectCard } from '@/components/cards/project-card';
+
+export const metadata: Metadata = {
+  title: 'Projects',
+  description: 'Browse hardware, software, automation, and interdisciplinary work.',
+};
 
 type Props = {
   searchParams: Promise<{
@@ -41,7 +47,7 @@ export default async function ProjectsPage({ searchParams }: Props) {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mb-8">
-        <h1 className="mb-3 text-4xl font-bold">Projects</h1>
+        <h1 className="font-display mb-3 text-4xl font-bold">Projects</h1>
         <p className="mb-5 max-w-2xl text-ink/80">
           Browse hardware, software, automation, and interdisciplinary work.
         </p>

@@ -119,6 +119,37 @@ export const TagSchema = z.object({
   color: z.string().nullable().optional(),
 });
 
+// Directus M2M returns tags as junction rows: [{ tags_id: { id, name, slug, color } }]
+// Normalize to flat TagSchema objects before validation.
+const NormalizedTagsField = z.preprocess((val) => {
+  if (!Array.isArray(val)) return val;
+  return val
+    .map((item) => {
+      if (item && typeof item === 'object' && 'tags_id' in item) return item.tags_id;
+      if (item && typeof item === 'object' && 'id' in item) return item;
+      return null;
+    })
+    .filter(Boolean);
+}, z.array(TagSchema).nullable().optional());
+
+// Directus M2M returns linked_projects as junction rows: [{ projects_id: { id, title, slug } }]
+const LinkedProjectSchema = z.object({
+  id: DirectusIdSchema,
+  title: z.string(),
+  slug: z.string(),
+});
+
+const LinkedProjectsField = z.preprocess((val) => {
+  if (!Array.isArray(val)) return val;
+  return val
+    .map((item) => {
+      if (item && typeof item === 'object' && 'projects_id' in item) return item.projects_id;
+      if (item && typeof item === 'object' && 'id' in item) return item;
+      return null;
+    })
+    .filter((v) => v && typeof v === 'object');
+}, z.array(LinkedProjectSchema).nullable().optional());
+
 export const ProjectSchema = z.object({
   id: DirectusIdSchema,
   title: z.string(),
@@ -133,7 +164,7 @@ export const ProjectSchema = z.object({
     .nullable()
     .optional(),
   domains: z.array(z.string()).nullable().optional(),
-  tags: z.array(TagSchema).nullable().optional(),
+  tags: NormalizedTagsField,
   collaborators: z.array(z.unknown()).nullable().optional(),
   duration: z.string().nullable().optional(),
   tools_used: z.array(z.string()).nullable().optional(),
@@ -144,12 +175,6 @@ export const ProjectSchema = z.object({
   date_updated: z.string().nullable().optional(),
 });
 
-const LinkedProjectSchema = z.object({
-  id: DirectusIdSchema,
-  title: z.string(),
-  slug: z.string(),
-});
-
 export const BlogPostSchema = z.object({
   id: DirectusIdSchema,
   title: z.string(),
@@ -157,8 +182,8 @@ export const BlogPostSchema = z.object({
   published_date: z.string(),
   summary: z.string(),
   body: z.string(),
-  tags: z.array(TagSchema).nullable().optional(),
-  linked_projects: z.array(LinkedProjectSchema).nullable().optional(),
+  tags: NormalizedTagsField,
+  linked_projects: LinkedProjectsField,
   is_draft: z.boolean().optional().default(false),
   last_updated: z.string().nullable().optional(),
   date_created: z.string().nullable().optional(),

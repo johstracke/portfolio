@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { Badge } from '@/components/shared/badge';
 import { Button } from '@/components/shared/button';
 import { getProfile, getProjects } from '@/lib/directus';
 import { formatDate } from '@/lib/utils';
+
+export const metadata: Metadata = {
+  title: 'Now',
+  description: 'Current status, availability, and what I\'m working on.',
+};
 
 export default async function NowPage() {
   const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
@@ -11,7 +17,7 @@ export default async function NowPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <section className="mb-12 max-w-3xl">
-        <h1 className="mb-6 text-4xl font-bold md:text-5xl">Now</h1>
+        <h1 className="font-display mb-6 text-4xl font-bold md:text-5xl">Now</h1>
         <p className="text-lg leading-8 text-ink/85">
           This page captures what is current right now: location, availability, and the work
           currently getting attention.

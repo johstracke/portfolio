@@ -9,7 +9,8 @@
     "lint": "next lint",
     "directus:schema": "npx tsx scripts/directus-schema-setup.ts",
     "directus:snapshot": "npx directus schema snapshot ./directus-schema.json",
-    "directus:seed": "npx tsx scripts/seed-projects.ts"
+    "directus:seed": "npx tsx scripts/seed-projects.ts",
+    "directus:verify": "npx tsx scripts/verify-directus-contract.ts"
   },
   "dependencies": {
     "@directus/sdk": "^17.0.0",
@@ -17,6 +18,7 @@
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

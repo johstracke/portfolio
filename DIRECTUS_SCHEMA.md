@@ -24,9 +24,10 @@ Complete schema definition for the portfolio Directus instance. Use this as refe
 ### Fields:
 
 #### id (Primary Key)
-- Type: UUID
+- Type: Integer (auto-increment)
 - Interface: Input (read-only)
 - Auto-generated
+- Note: Created by setup script; Directus default for new collections
 
 #### title
 - Type: String
@@ -125,6 +126,7 @@ Complete schema definition for the portfolio Directus instance. Use this as refe
 #### content_blocks
 - Type: One-to-Many (O2M)
 - Related Collection: content_blocks
+- Related Field: project_id (integer, FK to projects.id)
 - Note: "Ordered array of content blocks"
 
 #### date_created
@@ -215,12 +217,14 @@ Complete schema definition for the portfolio Directus instance. Use this as refe
 ### Fields:
 
 #### id (Primary Key)
-- Type: UUID
+- Type: Integer (auto-increment)
+- Note: Created by setup script
 
 #### project_id
-- Type: Many-to-One (M2O)
-- Related Collection: projects
+- Type: Integer
+- Foreign Key: projects.id
 - Required: Yes
+- Note: Setup script creates as integer; matches projects.id
 
 #### type
 - Type: String
