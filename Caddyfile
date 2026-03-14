@@ -1,0 +1,9 @@
+# Replace your-domain.com with your actual domain
+# For local testing, use: localhost { ... }
+your-domain.com {
+	reverse_proxy frontend:3000
+}
+
+cms.your-domain.com {
+	reverse_proxy directus:8055
+}
