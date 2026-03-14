@@ -1,0 +1,742 @@
+---
+description: 
+alwaysApply: true
+---
+
+You are building the exact portfolio described in PLAN.md using Next.js 15 App Router + TypeScript + Directus + Tailwind.
+
+## Core Rules — Never Break These
+
+### Architecture
+- **Always use Server Components by default.** Only add "use client" when interactivity or state is truly needed (forms, filters, interactive UI).
+- **Server-side data fetching:** Use async Server Components, fetch in page.tsx, pass data down as props.
+- **Validation:** Use Zod schemas (from lib/schemas.ts) to validate ALL Directus data before rendering.
+- **Error handling:** Wrap renders in try/catch, use error.tsx boundaries, validate with safeParse().
+
+### Code Quality
+- **Components:** Small, single-responsibility, <100 lines max. One file = one component (except shared utilities).
+- **Readability:** Use early returns, descriptive variable names, no unnecessary comments (only "why" comments).
+- **TypeScript:** Everything strictly typed. Use types from types/index.ts. No `any` unless absolutely necessary.
+- **Imports:** Absolute imports with `@/` prefix. Group: React → Next → external → internal → types → styles.
+
+### File Structure (Exact - Do Not Deviate)
+```
+app/
+├── layout.tsx           # root layout
+├── page.tsx             # homepage
+├── loading.tsx          # global loading
+├── error.tsx            # global error boundary
+├── projects/
+│   ├── page.tsx         # projects index (searchParams for filters)
+│   ├── loading.tsx
+│   └── [slug]/
+│       ├── page.tsx     # project detail
+│       └── loading.tsx
+├── blog/
+│   ├── page.tsx
+│   └── [slug]/page.tsx
+├── about/page.tsx
+└── now/page.tsx
+
+components/
+├── blocks/              # TextBlock.tsx, ImageBlock.tsx, GalleryBlock.tsx, etc.
+├── cards/               # ProjectCard.tsx, BlogCard.tsx
+├── filters/             # SearchBar.tsx, FilterSidebar.tsx (client components)
+├── layout/              # Header.tsx, Footer.tsx
+└── shared/              # Button.tsx, Badge.tsx, etc.
+
+lib/
+├── directus.ts          # Directus client + data fetching functions
+├── schemas.ts           # All Zod schemas (ContentBlockSchema, ProjectSchema, etc.)
+└── utils.ts             # Helper functions
+
+types/
+└── index.ts             # Export all TypeScript types (generated from Zod schemas)
+
+public/                  # Static assets only
+```
+
+### Naming Conventions
+- **Files/folders:** kebab-case (`project-card.tsx`, `filter-sidebar/`)
+- **Components:** PascalCase (`ProjectCard`, `FilterSidebar`)
+- **Functions:** camelCase (`getProjects`, `validateBlock`)
+- **Constants:** UPPER_SNAKE_CASE (`DIRECTUS_URL`, `MAX_PROJECTS`)
+
+### Styling (Neobrutalism)
+- **Tailwind only** - no CSS modules, no styled-components, no extra UI libraries
+- **Borders:** 3-5px solid black (`border-[3px] border-black`)
+- **Shadows:** Heavy, offset shadows (`shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`)
+- **Colors:** Use design tokens in tailwind.config.ts (bright, high contrast)
+- **Typography:** Bold, chunky fonts. Uppercase for buttons/headings when appropriate.
+- **Responsive:** Mobile-first, use Tailwind breakpoints (sm:, md:, lg:)
+
+### Dependencies (Strict Allowlist)
+**Only these are allowed without explicit approval:**
+- next (v15+)
+- react (v19+)
+- typescript
+- tailwindcss
+- @directus/sdk
+- zod
+- lucide-react (icons only)
+
+**Docker/Infrastructure (not in package.json):**
+- Docker & Docker Compose
+- Caddy or Traefik (reverse proxy)
+- PostgreSQL (via Docker image)
+
+**Never add to package.json:** shadcn/ui, framer-motion, axios, lodash, moment, or any other library without checking PLAN.md first.
+
+### Directus Integration
+- **API client:** Use `@directus/sdk` with `createDirectus()` and `.with(rest())`
+- **Queries:** Build query objects, use Directus filter syntax (`_contains`, `_eq`, etc.)
+- **Images:** Use Next.js Image component with `remotePatterns` configured in next.config.mjs
+- **Content blocks:** Validate with ContentBlockSchema before mapping to components
+- **Environment:** `DIRECTUS_URL` must be in .env.local (never hardcode)
+
+### Data Fetching Pattern
+```typescript
+// app/projects/page.tsx - Server Component
+export default async function ProjectsPage({ searchParams }) {
+  // Fetch server-side with filters
+  const projects = await getProjects(searchParams)
+  
+  // Validate
+  const validated = projects.map(p => ProjectSchema.safeParse(p))
+    .filter(r => r.success)
+    .map(r => r.data)
+  
+  return <ProjectsGrid projects={validated} />
+}
+```
+
+### Content Block Rendering Pattern
+```typescript
+// Always validate blocks before rendering
+const validatedBlocks = project.content_blocks
+  .map(block => ContentBlockSchema.safeParse(block))
+  .filter(result => {
+    if (!result.success) {
+      console.error('Invalid block:', result.error)
+      return false
+    }
+    return true
+  })
+  .map(result => result.data)
+
+// Then render with discriminated union
+validatedBlocks.map((block, i) => {
+  switch (block.type) {
+    case 'text': return <TextBlock key={i} {...block} />
+    case 'image': return <ImageBlock key={i} {...block} />
+    // etc.
+  }
+})
+```
+
+### Git Commits
+Use conventional commits:
+- `feat:` new features
+- `fix:` bug fixes
+- `chore:` tooling, dependencies
+- `docs:` documentation only
+- `refactor:` code restructuring
+- `style:` formatting, semicolons
+- `test:` adding tests
+
+Examples:
+- `feat: add project filtering by domain`
+- `fix: validate content blocks before render`
+- `chore: update directus sdk to v12`
+
+### Git Workflow
+
+**Branch Strategy (Simple):**
+- `main` - production-ready code, deployed automatically
+- `dev` - development branch, merge here first
+- Feature branches: `feat/project-filtering`, `fix/image-loading`
+
+**Workflow:**
+```bash
+# Start new feature
+git checkout dev
+git pull origin dev
+git checkout -b feat/project-filtering
+
+# Make changes, commit frequently
+git add .
+git commit -m "feat: add domain filter to projects page"
+
+# Push and create PR to dev
+git push origin feat/project-filtering
+# Create PR: feat/project-filtering → dev
+
+# After review/testing, merge to dev
+# When dev is stable, merge to main for deployment
+```
+
+**For Solo Development (Simpler):**
+If you're the only developer, you can skip dev branch:
+```bash
+# Work directly on feature branches
+git checkout -b feat/project-filtering
+# Commit, push, merge directly to main when ready
+```
+
+**Commit Frequency:**
+- Commit whenever you complete a logical unit of work
+- Before switching tasks
+- Before trying something experimental (easy to revert)
+- End of coding session
+
+**What to Commit:**
+- ✅ Source code changes
+- ✅ Config file updates (tailwind.config.ts, next.config.mjs)
+- ✅ Documentation updates (PLAN.md, README.md)
+- ✅ Package.json/lock file changes
+
+**What NOT to Commit:**
+- ❌ .env files (use .env.example template instead)
+- ❌ node_modules/
+- ❌ .next/ build output
+- ❌ Personal notes or scratch files
+- ❌ IDE-specific files (.vscode/, .idea/)
+
+**Git Ignore:**
+```gitignore
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing (if added later)
+coverage/
+
+# Build artifacts
+*.tsbuildinfo
+
+# Docker
+docker-compose.override.yml
+
+# Backups
+*.sql
+*.dump
+backups/
+```
+
+### Testing Strategy
+
+**Phase 1-2: Manual Testing Only**
+For initial build, skip automated testing. Focus on shipping. Test manually:
+- ✅ Visual checks in browser (localhost:3000)
+- ✅ Test on mobile (responsive design check)
+- ✅ Verify Directus data loads correctly
+- ✅ Click through all navigation
+- ✅ Test filter combinations
+- ✅ Check console for errors
+
+**Manual Testing Checklist (Before Deploy):**
+```
+[ ] Homepage loads, all sections visible
+[ ] Projects index shows all projects
+[ ] Filters work (domain, tag, status, search)
+[ ] Individual project pages load
+[ ] Content blocks render correctly
+[ ] Images load from Directus
+[ ] Blog index and posts work
+[ ] About/Now pages load
+[ ] Mobile responsive (test on phone or DevTools)
+[ ] No console errors
+[ ] Fast loading (<3s on good connection)
+```
+
+**Phase 3: Optional Automated Testing**
+Only add if you want it or have time:
+
+**If you add testing:**
+- Use Vitest (not Jest - faster, better ESM support)
+- Test critical Zod schemas (validate they catch bad data)
+- Test utility functions (formatDate, etc.)
+- Don't test components initially (low ROI for portfolio)
+
+**Allowed testing deps (only if needed):**
+- vitest
+- @testing-library/react (if testing components)
+
+**Testing structure (if implemented):**
+```
+__tests__/
+├── lib/
+│   ├── schemas.test.ts    # Zod schema validation tests
+│   └── utils.test.ts      # Utility function tests
+└── setup.ts               # Test configuration
+```
+
+**Example test (if you add testing):**
+```typescript
+// __tests__/lib/schemas.test.ts
+import { describe, it, expect } from 'vitest'
+import { TextBlockSchema } from '@/lib/schemas'
+
+describe('TextBlockSchema', () => {
+  it('validates correct text block', () => {
+    const result = TextBlockSchema.safeParse({
+      type: 'text',
+      content: 'Hello world'
+    })
+    expect(result.success).toBe(true)
+  })
+  
+  it('rejects invalid text block', () => {
+    const result = TextBlockSchema.safeParse({
+      type: 'text'
+      // missing content
+    })
+    expect(result.success).toBe(false)
+  })
+})
+```
+
+**Testing Principles (If Implemented):**
+- Test behavior, not implementation
+- Focus on data validation (Zod schemas)
+- Skip testing UI initially (manual testing is enough)
+- Test edge cases (empty arrays, missing fields, malformed data)
+- Keep tests simple and readable
+
+**Bottom Line:**
+- Phases 1-2: No automated tests, manual testing only
+- Phase 3: Optionally add Vitest for schema/utility testing
+- Never let testing block shipping
+- Manual testing in browser is perfectly fine for a portfolio
+
+## When Implementing from PLAN.md
+
+1. **Read PLAN.md section carefully** before starting
+2. **Output complete, working files** - not snippets or TODO comments
+3. **Add one-sentence explanation** of what you built
+4. **Only ask questions if the plan is genuinely ambiguous** - otherwise, make reasonable decisions
+5. **Stay within the rules** - if something seems to require breaking a rule, ask first
+
+## Common Patterns to Follow
+
+### Server-side filtering URL
+`/projects?domain=hardware&tag=robotics&status=completed`
+
+### Loading states
+Every page.tsx with data fetching should have a loading.tsx sibling
+
+### Error boundaries
+Use error.tsx for route-level error handling, try/catch for component-level
+
+### Image optimization
+```tsx
+import Image from 'next/image'
+<Image 
+  src={`${process.env.NEXT_PUBLIC_DIRECTUS_URL}/assets/${id}`}
+  alt={alt}
+  width={800}
+  height={600}
+/>
+```
+
+## What NOT to Do
+
+- ❌ Don't create helper/utility components before they're needed (YAGNI)
+- ❌ Don't add client-side state management (Zustand, Redux) - Server Components + searchParams is enough
+- ❌ Don't create API routes for Directus - fetch directly in Server Components
+- ❌ Don't use `useEffect` for data fetching - that's what Server Components are for
+- ❌ Don't add loading spinners everywhere - use Suspense boundaries and loading.tsx
+- ❌ Don't write CSS files - Tailwind classes only
+- ❌ Don't create overly generic/abstract code - concrete and specific is better
+- ❌ Don't add automated tests in Phase 1-2 - manual testing is enough initially
+- ❌ Don't commit .env files - use .env.example as template
+- ❌ Don't merge to main without testing locally first
+
+## Questions You Should Answer Yourself
+
+- "What should the error state look like?" → Use error.tsx with a simple message
+- "Should I add a loading spinner?" → Use loading.tsx instead
+- "How should I handle this edge case?" → Check PLAN.md first, then use reasonable defaults
+- "Should this be a client or server component?" → Server by default, client only for interactivity
+
+## Questions You Should Ask
+
+- "The PLAN.md doesn't specify X, and it affects the data schema" → Ask
+- "This requires a new dependency not in the allowlist" → Ask
+- "This conflicts with another requirement in PLAN.md" → Ask
+- "The user's Directus schema differs from PLAN.md" → Ask
+
+## Deployment Workflow
+
+**Recommended Setup for Your VPS: Docker Compose**
+
+Since you have a 24GB Oracle VPS and Directus already runs via Docker, containerize everything for consistency and easy management.
+
+### Docker Setup
+
+**Project Structure:**
+```
+portfolio/
+├── frontend/              # Next.js app
+│   ├── app/
+│   ├── components/
+│   ├── lib/
+│   ├── Dockerfile
+│   └── package.json
+├── docker-compose.yml     # Orchestrates all services
+├── .env                   # Environment variables (DO NOT COMMIT)
+└── .env.example           # Template (COMMIT THIS)
+```
+
+**docker-compose.yml:**
+```yaml
+version: '3.8'
+
+services:
+  # PostgreSQL database for Directus
+  postgres:
+    image: postgres:16-alpine
+    container_name: portfolio_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - portfolio_network
+
+  # Directus CMS
+  directus:
+    image: directus/directus:latest
+    container_name: portfolio_directus
+    restart: unless-stopped
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: ${DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET}
+      DB_CLIENT: 'pg'
+      DB_HOST: 'postgres'
+      DB_PORT: '5432'
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL}
+    volumes:
+      - directus_uploads:/directus/uploads
+      - directus_extensions:/directus/extensions
+    depends_on:
+      - postgres
+    networks:
+      - portfolio_network
+
+  # Next.js frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: portfolio_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_DIRECTUS_URL: ${DIRECTUS_PUBLIC_URL}
+      NODE_ENV: production
+    depends_on:
+      - directus
+    networks:
+      - portfolio_network
+
+  # Caddy reverse proxy (handles SSL, routing)
+  caddy:
+    image: caddy:2-alpine
+    container_name: portfolio_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - portfolio_network
+
+volumes:
+  postgres_data:
+  directus_uploads:
+  directus_extensions:
+  caddy_data:
+  caddy_config:
+
+networks:
+  portfolio_network:
+    driver: bridge
+```
+
+**frontend/Dockerfile:**
+```dockerfile
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build Next.js app
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copy necessary files from builder
+COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Expose port
+EXPOSE 3000
+
+# Start Next.js
+CMD ["npm", "start"]
+```
+
+**Caddyfile (reverse proxy config):**
+```
+your-domain.com {
+    reverse_proxy frontend:3000
+}
+
+cms.your-domain.com {
+    reverse_proxy directus:8055
+}
+```
+
+**.env.example:**
+```bash
+# Database
+DB_USER=directus
+DB_PASSWORD=your_secure_password_here
+DB_NAME=directus
+
+# Directus
+DIRECTUS_KEY=your_random_key_here
+DIRECTUS_SECRET=your_random_secret_here
+DIRECTUS_PUBLIC_URL=https://cms.your-domain.com
+ADMIN_EMAIL=you@example.com
+ADMIN_PASSWORD=your_admin_password_here
+
+# Frontend
+NEXT_PUBLIC_DIRECTUS_URL=https://cms.your-domain.com
+```
+
+### Deployment Process
+
+**Initial Setup (One Time):**
+```bash
+# SSH into your Oracle VPS
+ssh your-vps
+
+# Install Docker & Docker Compose (if not already installed)
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+# Log out and back in
+
+# Clone your repo
+git clone https://github.com/yourusername/portfolio.git
+cd portfolio
+
+# Copy and configure environment
+cp .env.example .env
+nano .env  # Edit with your actual values
+
+# Start everything
+docker compose up -d
+
+# Check logs
+docker compose logs -f
+```
+
+**Regular Deployment (After Updates):**
+```bash
+# SSH into VPS
+ssh your-vps
+cd portfolio
+
+# Pull latest code
+git pull origin main
+
+# Rebuild and restart (zero-downtime with --build)
+docker compose up -d --build
+
+# Check everything is running
+docker compose ps
+```
+
+**Useful Commands:**
+```bash
+# View logs
+docker compose logs -f frontend
+docker compose logs -f directus
+
+# Restart a service
+docker compose restart frontend
+
+# Stop everything
+docker compose down
+
+# Stop and remove volumes (CAREFUL - deletes data)
+docker compose down -v
+
+# Backup database
+docker exec portfolio_db pg_dump -U directus directus > backup.sql
+
+# Restore database
+docker exec -i portfolio_db psql -U directus directus < backup.sql
+```
+
+### Benefits of This Setup
+
+**Cost:**
+- $0/month (using your existing VPS)
+- vs $15/month Directus Cloud + $20/month Vercel Pro
+
+**Control:**
+- Full control over all services
+- Easy to add Redis, monitoring, etc. later
+- Everything in one place
+
+**Development:**
+- Exact same environment local and production
+- No "works on my machine" issues
+- Easy to test before deploying
+
+**Learning:**
+- Docker is useful for embedded/IoT work
+- Good for future projects
+- Industry-standard skill
+
+### Pre-Deployment Checklist (Docker)
+```
+[ ] .env file configured with secure passwords
+[ ] Domain DNS pointed to VPS IP
+[ ] Firewall allows ports 80, 443, (and 22 for SSH)
+[ ] docker-compose.yml tested locally
+[ ] Backups configured (at minimum: database dumps)
+[ ] SSL certificates working (Caddy handles automatically)
+[ ] All services start successfully (docker compose ps)
+[ ] Can access frontend at your-domain.com
+[ ] Can access Directus at cms.your-domain.com
+[ ] Environment variables loaded correctly
+```
+
+---
+
+**Alternative: Vercel + Self-Hosted Directus (Hybrid)**
+
+If you want simpler frontend deployment but keep Directus on your VPS:
+- Frontend: Deploy to Vercel (free, auto-deploy, global CDN)
+- Directus: Run on your VPS via Docker
+- Set `NEXT_PUBLIC_DIRECTUS_URL` in Vercel to `https://cms.your-domain.com`
+
+**Recommended Setup: Vercel (Free Tier) - Only If Not Using Docker**
+
+**Initial Setup:**
+1. Push code to GitHub
+2. Connect Vercel to GitHub repo
+3. Configure environment variables in Vercel:
+   - `NEXT_PUBLIC_DIRECTUS_URL` (your Directus instance URL)
+   - Any other Directus credentials if needed
+4. Deploy automatically on push to main
+
+**Deployment Process:**
+```bash
+# Local development
+npm run dev              # Test locally at localhost:3000
+
+# Pre-deployment checks
+npm run build            # Ensure build succeeds
+npm run start            # Test production build locally
+
+# Deploy
+git add .
+git commit -m "feat: add new feature"
+git push origin main     # Auto-deploys to Vercel
+```
+
+**Environment Variables:**
+```bash
+# .env.local (local development - DO NOT COMMIT)
+NEXT_PUBLIC_DIRECTUS_URL=http://localhost:8055
+
+# .env.example (COMMIT THIS - template for others)
+NEXT_PUBLIC_DIRECTUS_URL=your_directus_url_here
+
+# Vercel (production)
+NEXT_PUBLIC_DIRECTUS_URL=https://your-directus-instance.com
+```
+
+**Deployment Option:**
+- **Self-hosted:** VPS with Docker (more work, full control)
+
+**Directus Hosting:**
+- **Docker on VPS:** Best balance of cost and control
+
+**Pre-Deployment Checklist:**
+```
+[ ] All environment variables set in Vercel
+[ ] Build succeeds locally (npm run build)
+[ ] No TypeScript errors
+[ ] No console errors in production build
+[ ] All images have remotePatterns configured
+[ ] .gitignore includes .env files
+[ ] Manual testing checklist passed
+[ ] Directus instance is accessible from production
+```
+
+**Monitoring (Optional Phase 3):**
+- Vercel Analytics (built-in, free)
+- Plausible or Simple Analytics (privacy-friendly)
+- Console logs in Vercel dashboard for errors
+
+---
+
+**This rule is always active for this project. Refer to PLAN.md as the source of truth for all product decisions.**
