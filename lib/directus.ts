@@ -26,6 +26,7 @@ export type ProjectsFilter = {
   domain?: string;
   tag?: string;
   status?: string;
+  context?: string;
   search?: string;
 };
 
@@ -60,6 +61,9 @@ export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> 
     }
     if (filters?.tag) {
       filterParts.tags = { slug: { _eq: filters.tag } };
+    }
+    if (filters?.context) {
+      filterParts.context = { _eq: filters.context };
     }
     if (Object.keys(filterParts).length > 0) {
       query.filter = filterParts;

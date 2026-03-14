@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Badge } from '@/components/shared/badge';
 import { Button } from '@/components/shared/button';
 import { getProfile, getProjects } from '@/lib/directus';
@@ -31,7 +32,14 @@ export default async function NowPage() {
         </div>
         <div className="border-[3px] border-black bg-surface p-6 shadow-brutal-sm">
           <p className="mb-2 text-sm font-bold uppercase text-ink/70">Next stop</p>
-          <p className="text-2xl font-bold">{profile?.next_location ?? 'Set in Directus'}</p>
+          <p className="text-2xl font-bold">
+            {profile?.next_location ?? 'Set in Directus'}
+          </p>
+          {profile?.next_location && profile?.location_change_date && (
+            <p className="mt-1 text-sm text-ink/60">
+              Moving {formatDate(profile.location_change_date)}
+            </p>
+          )}
         </div>
         <div className="border-[3px] border-black bg-primary p-6 text-ink shadow-brutal-sm">
           <p className="mb-2 text-sm font-bold uppercase text-ink/70">Availability</p>
@@ -44,16 +52,15 @@ export default async function NowPage() {
       <section className="mb-12">
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="text-2xl font-bold">Current Focus</h2>
-          <Button href="/projects" variant="outline">
-            Browse Projects
-          </Button>
+          <Button href="/projects" variant="outline">Browse Projects</Button>
         </div>
         {activeProjects.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-3">
             {activeProjects.map((project) => (
-              <div
+              <Link
                 key={project.id}
-                className="border-[3px] border-black bg-surface p-5 shadow-brutal-sm"
+                href={`/projects/${project.slug}`}
+                className="block border-[3px] border-black bg-surface p-5 shadow-brutal-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <div className="mb-3 flex flex-wrap gap-2">
                   <Badge variant="primary">{project.status}</Badge>
@@ -63,12 +70,13 @@ export default async function NowPage() {
                 </div>
                 <h3 className="mb-2 text-xl font-bold">{project.title}</h3>
                 <p className="text-sm text-ink/80">{project.short_summary}</p>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (
           <p className="text-ink/80">
-            No ongoing projects yet. Mark projects as `ongoing` in Directus to feature them here.
+            No ongoing projects yet. Mark projects as <code>ongoing</code> in Directus to feature
+            them here.
           </p>
         )}
       </section>
@@ -78,9 +86,10 @@ export default async function NowPage() {
         {latestProjects.length > 0 ? (
           <div className="space-y-4">
             {latestProjects.map((project) => (
-              <div
+              <Link
                 key={project.id}
-                className="flex flex-col gap-3 border-[3px] border-black bg-surface p-5 shadow-brutal-sm md:flex-row md:items-center md:justify-between"
+                href={`/projects/${project.slug}`}
+                className="flex flex-col gap-3 border-[3px] border-black bg-surface p-5 shadow-brutal-sm md:flex-row md:items-center md:justify-between hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <div>
                   <h3 className="text-xl font-bold">{project.title}</h3>
@@ -92,7 +101,7 @@ export default async function NowPage() {
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="secondary">{project.status}</Badge>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

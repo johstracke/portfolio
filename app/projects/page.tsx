@@ -14,6 +14,7 @@ type Props = {
     domain?: string;
     tag?: string;
     status?: string;
+    context?: string;
     search?: string;
   }>;
 };
@@ -26,6 +27,7 @@ export default async function ProjectsPage({ searchParams }: Props) {
       domain: params.domain,
       tag: params.tag,
       status: params.status,
+      context: params.context,
       search: params.search,
     }),
   ]);
@@ -41,8 +43,16 @@ export default async function ProjectsPage({ searchParams }: Props) {
         .map((tag) => [tag.slug, { label: tag.name, value: tag.slug }])
     ).values()
   ).sort((left, right) => left.label.localeCompare(right.label));
-  const activeFilters = [params.domain, params.status, params.tag, params.search].filter(Boolean)
-    .length;
+  const contexts = Array.from(
+    new Set(
+      allProjects
+        .map((p) => p.context)
+        .filter((c) => c != null)
+        .map(String)
+    )
+  ).sort();
+  const activeFilters = [params.domain, params.status, params.tag, params.context, params.search]
+    .filter(Boolean).length;
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -59,9 +69,11 @@ export default async function ProjectsPage({ searchParams }: Props) {
           domains={domains}
           statuses={statuses}
           tags={tags}
+          contexts={contexts}
           selectedDomain={params.domain}
           selectedStatus={params.status}
           selectedTag={params.tag}
+          selectedContext={params.context}
         />
 
         <div>

@@ -11,18 +11,22 @@ type FilterSidebarProps = {
   domains: string[];
   statuses: string[];
   tags: FilterOption[];
+  contexts: string[];
   selectedDomain?: string;
   selectedStatus?: string;
   selectedTag?: string;
+  selectedContext?: string;
 };
 
 export function FilterSidebar({
   domains,
   statuses,
   tags,
+  contexts,
   selectedDomain,
   selectedStatus,
   selectedTag,
+  selectedContext,
 }: FilterSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -46,6 +50,7 @@ export function FilterSidebar({
     nextParams.delete('domain');
     nextParams.delete('status');
     nextParams.delete('tag');
+    nextParams.delete('context');
     nextParams.delete('search');
     router.push(pathname);
   }
@@ -106,6 +111,24 @@ export function FilterSidebar({
           ))}
         </select>
       </label>
+
+      {contexts.length > 0 && (
+        <label className="block">
+          <span className="mb-2 block text-sm font-bold uppercase text-ink/70">Context</span>
+          <select
+            value={selectedContext ?? ''}
+            onChange={(event) => updateParam('context', event.target.value)}
+            className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+          >
+            <option value="">All contexts</option>
+            {contexts.map((ctx) => (
+              <option key={ctx} value={ctx}>
+                {ctx}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       <button
         type="button"

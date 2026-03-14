@@ -97,9 +97,20 @@ export default async function AboutPage() {
       <section className="border-[3px] border-black bg-secondary p-6 text-white shadow-brutal-sm">
         <h2 className="mb-3 text-2xl font-bold">Contact</h2>
         <p className="mb-4 text-white/90">
-          {profile?.contact_email
-            ? `Reach out at ${profile.contact_email} for collaborations, project work, or conversations.`
-            : 'Add your contact email in Directus to make this section live.'}
+          {profile?.contact_email ? (
+            <>
+              Reach out at{' '}
+              <a
+                href={`mailto:${profile.contact_email}`}
+                className="underline hover:no-underline"
+              >
+                {profile.contact_email}
+              </a>{' '}
+              for collaborations, project work, or conversations.
+            </>
+          ) : (
+            'Add your contact email in Directus to make this section live.'
+          )}
         </p>
         <div className="flex flex-wrap gap-3">
           {profile?.github_url ? (

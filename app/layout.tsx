@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   },
   description:
     'Portfolio website showcasing hardware, software, automation, and sustainable systems.',
+  icons: {
+    icon: '/favicon.svg',
+  },
   openGraph: {
     type: 'website',
     locale: 'en',

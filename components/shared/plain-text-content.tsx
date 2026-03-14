@@ -27,8 +27,8 @@ export function PlainTextContent({
 
   return (
     <div className={className}>
-      {paragraphs.map((paragraph) => (
-        <p key={paragraph} className="whitespace-pre-wrap">
+      {paragraphs.map((paragraph, i) => (
+        <p key={i} className="whitespace-pre-wrap">
           {paragraph}
         </p>
       ))}

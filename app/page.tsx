@@ -9,6 +9,21 @@ export const metadata: Metadata = {
     'Portfolio showcasing hardware, software, automation, and sustainable systems.',
 };
 
+const WHAT_I_BUILD = [
+  {
+    label: 'Hardware',
+    description: 'Embedded systems, PCB design, mechanical builds, and physical prototypes.',
+  },
+  {
+    label: 'Software',
+    description: 'Web apps, automation scripts, data pipelines, and developer tooling.',
+  },
+  {
+    label: 'Systems',
+    description: 'Closing the loop between hardware and software in sustainable, practical work.',
+  },
+] as const;
+
 export default async function HomePage() {
   const [profile, projects, blogPosts] = await Promise.all([
     getProfile(),
@@ -30,31 +45,53 @@ export default async function HomePage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <section className="mb-16">
-        <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">Portfolio</h1>
-        <p className="text-lg text-ink/80 mb-4 max-w-2xl">
+      {/* Hero */}
+      <section className="mb-16 max-w-2xl">
+        <h1 className="font-display text-5xl md:text-6xl font-bold mb-4 leading-tight">
+          {profile?.bio ? 'Hi, I\'m Johannes.' : 'Portfolio'}
+        </h1>
+        <p className="text-lg text-ink/80 mb-6 leading-relaxed">
           {profile?.bio ??
             'Building things at the intersection of hardware, software, and sustainable systems.'}
         </p>
-        {profile?.current_location && (
-          <p className="text-ink/70 mb-2">
-            Currently: {profile.current_location}
-            {profile.next_location && ` → ${profile.next_location}`}
-          </p>
-        )}
-        {profile?.availability_status && (
-          <p className="text-ink/70 mb-6">{profile.availability_status}</p>
-        )}
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-2 mb-8">
+          {profile?.current_location && (
+            <span className="border-[3px] border-black bg-surface px-3 py-1 text-sm font-bold shadow-brutal-sm">
+              📍 {profile.current_location}
+              {profile.next_location && ` → ${profile.next_location}`}
+            </span>
+          )}
+          {profile?.availability_status && (
+            <span className="border-[3px] border-black bg-primary px-3 py-1 text-sm font-bold shadow-brutal-sm">
+              {profile.availability_status}
+            </span>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-4">
           <Button href="/projects">View Projects</Button>
-          <Button href="/about" variant="outline">
-            About
-          </Button>
+          <Button href="/about" variant="outline">About</Button>
         </div>
       </section>
 
+      {/* What I Build */}
+      <section className="mb-16">
+        <h2 className="font-display text-2xl font-bold mb-6">What I Build</h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {WHAT_I_BUILD.map(({ label, description }) => (
+            <div
+              key={label}
+              className="border-[3px] border-black bg-surface p-5 shadow-brutal-sm"
+            >
+              <h3 className="font-bold text-lg mb-2 uppercase tracking-wide">{label}</h3>
+              <p className="text-sm text-ink/75 leading-relaxed">{description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Projects */}
       {featuredProjects.length > 0 && (
-        <section>
+        <section className="mb-16">
           <h2 className="font-display text-2xl font-bold mb-6">Featured Projects</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredProjects.map((project) => (
@@ -62,15 +99,14 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="mt-6">
-            <Button href="/projects" variant="secondary">
-              All Projects
-            </Button>
+            <Button href="/projects" variant="secondary">All Projects</Button>
           </div>
         </section>
       )}
 
+      {/* Recent Activity */}
       {recentActivity.length > 0 && (
-        <section className="mt-16">
+        <section>
           <h2 className="font-display text-2xl font-bold mb-6">Recent Activity</h2>
           <div className="space-y-4">
             {recentActivity.map((entry) =>
@@ -81,13 +117,9 @@ export default async function HomePage() {
               )
             )}
           </div>
-          <div className="mt-6 flex gap-4">
-            <Button href="/blog" variant="outline">
-              All Posts
-            </Button>
-            <Button href="/projects" variant="outline">
-              All Projects
-            </Button>
+          <div className="mt-6 flex flex-wrap gap-4">
+            <Button href="/blog" variant="outline">All Posts</Button>
+            <Button href="/projects" variant="outline">All Projects</Button>
           </div>
         </section>
       )}
