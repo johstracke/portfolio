@@ -38,9 +38,8 @@ cp .env.example .env
 
 docker compose up -d --build
 
-# Apply schema and seed (first time only)
-npm run directus:schema
-npm run directus:seed
+# Apply schema (first time only)
+npm run directus:setup
 ```
 
 - Frontend: http://localhost:3000 (or your domain)
