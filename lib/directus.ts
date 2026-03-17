@@ -48,7 +48,23 @@ export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> 
   try {
     const cmsClient = await getCmsClient();
     const query: Record<string, unknown> = {
-      fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color'],
+      fields: [
+        '*',
+        'tags.tags_id.id',
+        'tags.tags_id.name',
+        'tags.tags_id.slug',
+        'tags.tags_id.color',
+        'content_blocks',
+        'blocks.*',
+        'blocks.item.*',
+        'blocks.item.images.*',
+        'blocks.item.left_blocks.*',
+        'blocks.item.left_blocks.item.*',
+        'blocks.item.left_blocks.item.images.*',
+        'blocks.item.right_blocks.*',
+        'blocks.item.right_blocks.item.*',
+        'blocks.item.right_blocks.item.images.*',
+      ],
       sort: ['-start_date'],
     };
 
@@ -60,7 +76,7 @@ export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> 
       filterParts.domains = { _contains: filters.domain };
     }
     if (filters?.tag) {
-      filterParts.tags = { slug: { _eq: filters.tag } };
+      filterParts.tags = { tags_id: { slug: { _eq: filters.tag } } };
     }
     if (filters?.context) {
       filterParts.context = { _eq: filters.context };
@@ -98,7 +114,23 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     const items = (await cmsClient.request(
       readItems('projects', {
         filter: { slug: { _eq: slug } },
-        fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color'],
+        fields: [
+          '*',
+          'tags.tags_id.id',
+          'tags.tags_id.name',
+          'tags.tags_id.slug',
+          'tags.tags_id.color',
+          'content_blocks',
+          'blocks.*',
+          'blocks.item.*',
+          'blocks.item.images.*',
+          'blocks.item.left_blocks.*',
+          'blocks.item.left_blocks.item.*',
+          'blocks.item.left_blocks.item.images.*',
+          'blocks.item.right_blocks.*',
+          'blocks.item.right_blocks.item.*',
+          'blocks.item.right_blocks.item.images.*',
+        ],
         limit: 1,
       } as never)
     )) as unknown[];
@@ -106,18 +138,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     const item = items[0];
     if (!item) return null;
 
-    const contentBlocks = (await cmsClient.request(
-      readItems('content_blocks', {
-        filter: { project_id: { _eq: (item as { id: string | number }).id } },
-        fields: ['*'],
-        sort: ['sort'],
-      } as never)
-    )) as unknown[];
-
-    const result = ProjectZod.safeParse({
-      ...item,
-      content_blocks: contentBlocks,
-    });
+    const result = ProjectZod.safeParse(item);
     if (result.success) return result.data;
     console.error('[Directus] Project validation failed for slug:', slug, result.error.flatten());
     return null;

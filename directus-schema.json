@@ -14,11 +14,6 @@
       "schema": { "name": "projects" }
     },
     {
-      "collection": "content_blocks",
-      "meta": { "icon": "widgets", "note": "Flexible content blocks for projects", "sort": 3 },
-      "schema": { "name": "content_blocks" }
-    },
-    {
       "collection": "blog_posts",
       "meta": { "icon": "article", "note": "Blog content" },
       "schema": { "name": "blog_posts" }
@@ -49,11 +44,7 @@
     { "collection": "projects", "field": "tools_used", "type": "json", "meta": { "interface": "tags" }, "schema": {} },
     { "collection": "projects", "field": "github_repo", "type": "string", "meta": { "interface": "input" }, "schema": {} },
     { "collection": "projects", "field": "external_links", "type": "json", "meta": { "interface": "list" }, "schema": {} },
-    { "collection": "content_blocks", "field": "id", "type": "integer", "meta": {}, "schema": { "is_primary_key": true, "has_auto_increment": true } },
-    { "collection": "content_blocks", "field": "project_id", "type": "integer", "meta": { "interface": "input", "required": true }, "schema": { "foreign_key_table": "projects", "foreign_key_column": "id" } },
-    { "collection": "content_blocks", "field": "type", "type": "string", "meta": { "interface": "select-dropdown-m2o", "required": true }, "schema": { "max_length": 50 } },
-    { "collection": "content_blocks", "field": "sort", "type": "integer", "meta": { "interface": "input" }, "schema": { "default_value": 0 } },
-    { "collection": "content_blocks", "field": "content", "type": "json", "meta": { "interface": "input-code" }, "schema": {} },
+    { "collection": "projects", "field": "content_blocks", "type": "json", "meta": { "interface": "list", "note": "Flexible content blocks for project pages", "options": { "template": "{{type}}", "createNewLabel": "Add Block", "sort": true } }, "schema": {} },
     { "collection": "blog_posts", "field": "id", "type": "uuid", "meta": {}, "schema": { "is_primary_key": true, "has_auto_increment": false } },
     { "collection": "blog_posts", "field": "title", "type": "string", "meta": { "interface": "input", "required": true }, "schema": { "max_length": 255 } },
     { "collection": "blog_posts", "field": "slug", "type": "string", "meta": { "interface": "input", "required": true }, "schema": { "max_length": 255, "is_unique": true } },

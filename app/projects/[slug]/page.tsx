@@ -17,12 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const project = await getProjectBySlug(slug);
   if (!project) return {};
   return {
-    title: project.title,
-    description: project.short_summary,
+    title: project.title ?? '',
+    description: project.short_summary ?? '',
     openGraph: {
-      title: project.title,
-      description: project.short_summary,
-      images: [{ url: getAssetUrl(project.thumbnail), alt: project.title }],
+      title: project.title ?? '',
+      description: project.short_summary ?? '',
+      images: [{ url: getAssetUrl(project.thumbnail ?? undefined), alt: project.title ?? '' }],
     },
   };
 }
@@ -36,7 +36,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     notFound();
   }
 
-  const blocks = project.content_blocks ?? [];
+  const blocks = (project.blocks?.length ? project.blocks : project.content_blocks) ?? [];
   const hasMeta =
     (project.tools_used?.length ?? 0) > 0 ||
     (project.collaborators?.length ?? 0) > 0 ||
@@ -56,8 +56,8 @@ export default async function ProjectDetailPage({ params }: Props) {
       <header className="mb-8">
         <div className="relative aspect-video max-w-4xl mx-auto mb-6 overflow-hidden border-[3px] border-black shadow-brutal">
           <Image
-            src={getAssetUrl(project.thumbnail)}
-            alt={project.title}
+            src={getAssetUrl(project.thumbnail ?? undefined)}
+            alt={project.title ?? ''}
             fill
             className="object-cover"
             priority
@@ -82,8 +82,8 @@ export default async function ProjectDetailPage({ params }: Props) {
           ))}
         </div>
         <p className="text-sm text-ink/60">
-          {formatDate(project.start_date)}
-          {project.end_date && ` – ${formatDate(project.end_date)}`}
+          {formatDate(project.start_date ?? undefined)}
+          {project.end_date && ` – ${formatDate(project.end_date ?? undefined)}`}
         </p>
       </header>
 
@@ -102,8 +102,8 @@ export default async function ProjectDetailPage({ params }: Props) {
                   <p className="font-bold text-ink mb-1">Tools</p>
                   <div className="flex flex-wrap gap-1">
                     {project.tools_used!.map((tool) => (
-                      <Badge key={tool} variant="secondary">
-                        {tool}
+                      <Badge key={tool ?? ''} variant="secondary">
+                        {tool ?? ''}
                       </Badge>
                     ))}
                   </div>
@@ -158,11 +158,11 @@ export default async function ProjectDetailPage({ params }: Props) {
             {relatedPosts.map((post) => (
               <li key={post.id}>
                 <Link
-                  href={`/blog/${post.slug}`}
+                  href={`/blog/${post.slug ?? ''}`}
                   className="block border-[3px] border-black bg-surface p-4 shadow-brutal-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                 >
                   <h3 className="font-bold">{post.title}</h3>
-                  <p className="text-sm text-ink/70">{formatDate(post.published_date)}</p>
+                  <p className="text-sm text-ink/70">{formatDate(post.published_date ?? undefined)}</p>
                 </Link>
               </li>
             ))}

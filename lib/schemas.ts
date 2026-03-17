@@ -14,7 +14,15 @@ export const ImageBlockContentSchema = z.object({
 });
 
 export const GalleryBlockContentSchema = z.object({
-  images: z.array(z.string().uuid()),
+  images: z.preprocess((val) => {
+    if (!Array.isArray(val)) return val;
+    return val.map((item: any) => {
+      if (item && typeof item === 'object' && 'directus_files_id' in item) {
+        return item.directus_files_id;
+      }
+      return item;
+    });
+  }, z.array(z.string().uuid())),
   layout: z.enum(['grid', 'carousel', 'masonry']).optional().default('grid'),
   caption: z.string().optional(),
 });
@@ -53,64 +61,142 @@ export const CalloutBlockContentSchema = z.object({
   callout_type: z.enum(['info', 'warning', 'success', 'tip']).optional().default('info'),
 });
 
-export const ContentBlockSchema = z.discriminatedUnion('type', [
-  z.object({
+// Base blocks (no layout) - used for layout's nested blocks to avoid infinite recursion
+const BaseContentBlockSchema = z.discriminatedUnion('type', [
+  TextBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('text'),
     sort: z.number().optional(),
-    content: TextBlockContentSchema,
   }),
-  z.object({
+  ImageBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('image'),
     sort: z.number().optional(),
-    content: ImageBlockContentSchema,
   }),
-  z.object({
+  GalleryBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('gallery'),
     sort: z.number().optional(),
-    content: GalleryBlockContentSchema,
   }),
-  z.object({
+  VideoBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('video'),
     sort: z.number().optional(),
-    content: VideoBlockContentSchema,
   }),
-  z.object({
+  CadBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('cad'),
     sort: z.number().optional(),
-    content: CadBlockContentSchema,
   }),
-  z.object({
+  CodeBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('code'),
     sort: z.number().optional(),
-    content: CodeBlockContentSchema,
   }),
-  z.object({
+  SpecsBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('specs'),
     sort: z.number().optional(),
-    content: SpecsBlockContentSchema,
   }),
-  z.object({
+  CalloutBlockContentSchema.extend({
     id: DirectusIdSchema.optional(),
-    project_id: DirectusIdSchema.optional(),
     type: z.literal('callout'),
     sort: z.number().optional(),
-    content: CalloutBlockContentSchema,
   }),
 ]);
+
+export const LayoutBlockSchema = z.object({
+  id: DirectusIdSchema.optional(),
+  type: z.literal('layout'),
+  sort: z.number().optional(),
+  layout_type: z.enum(['two-column', 'sidebar-left', 'sidebar-right']).optional().default('two-column'),
+  left_blocks: z.array(z.preprocess((val) => {
+    if (typeof val !== 'object' || val === null) return val;
+    const raw = val as any;
+    if (raw.collection && raw.item && typeof raw.item === 'object') {
+      const type = raw.collection.replace('project_blocks_', '');
+      return { ...raw.item, type, id: raw.item.id };
+    }
+    return raw;
+  }, BaseContentBlockSchema)).optional().default([]),
+  right_blocks: z.array(z.preprocess((val) => {
+    if (typeof val !== 'object' || val === null) return val;
+    const raw = val as any;
+    if (raw.collection && raw.item && typeof raw.item === 'object') {
+      const type = raw.collection.replace('project_blocks_', '');
+      return { ...raw.item, type, id: raw.item.id };
+    }
+    return raw;
+  }, BaseContentBlockSchema)).optional().default([]),
+  gap: z.enum(['small', 'medium', 'large']).optional().default('medium'),
+});
+
+export const ContentBlockSchema = z.lazy(() => z.discriminatedUnion('type', [
+  TextBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('text'),
+    sort: z.number().optional(),
+  }),
+  ImageBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('image'),
+    sort: z.number().optional(),
+  }),
+  GalleryBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('gallery'),
+    sort: z.number().optional(),
+  }),
+  VideoBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('video'),
+    sort: z.number().optional(),
+  }),
+  CadBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('cad'),
+    sort: z.number().optional(),
+  }),
+  CodeBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('code'),
+    sort: z.number().optional(),
+  }),
+  SpecsBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('specs'),
+    sort: z.number().optional(),
+  }),
+  CalloutBlockContentSchema.extend({
+    id: DirectusIdSchema.optional(),
+    type: z.literal('callout'),
+    sort: z.number().optional(),
+  }),
+  LayoutBlockSchema,
+]) as any);
+
+export type ContentBlock = z.infer<typeof ContentBlockSchema>;
+
+// Normalize O2M format (content nested), Block Editor format (data nested), and M2A format before validating
+export const SafeContentBlockSchema: z.ZodType<ContentBlock> = z.preprocess((val) => {
+  if (typeof val !== 'object' || val === null) return val;
+  const raw = val as any;
+
+  // Handle M2A format: { collection: 'project_blocks_text', item: { ... } }
+  if (raw.collection && raw.item && typeof raw.item === 'object') {
+    const type = raw.collection.replace('project_blocks_', '');
+    return { ...raw.item, type, id: raw.item.id };
+  }
+
+  const block = raw;
+  if (block.content && typeof block.content === 'object') {
+    return { ...block, ...block.content };
+  }
+  if (block.data && typeof block.data === 'object') {
+    return { ...block, ...block.data };
+  }
+  return block;
+}, z.lazy(() => ContentBlockSchema));
 
 export const TagSchema = z.object({
   id: DirectusIdSchema,
@@ -154,11 +240,11 @@ export const ProjectSchema = z.object({
   id: DirectusIdSchema,
   title: z.string(),
   slug: z.string(),
-  thumbnail: z.string().uuid(),
-  start_date: z.string(),
+  thumbnail: z.string().uuid().nullable().optional(),
+  start_date: z.string().nullable().optional(),
   end_date: z.string().nullable().optional(),
-  status: z.enum(['completed', 'ongoing', 'paused']),
-  short_summary: z.string(),
+  status: z.enum(['completed', 'ongoing', 'paused', 'draft']),
+  short_summary: z.string().nullable().optional(),
   context: z
     .enum(['Personal', 'NGO', 'Academic', 'Commercial', 'Collaboration'])
     .nullable()
@@ -170,7 +256,15 @@ export const ProjectSchema = z.object({
   tools_used: z.array(z.string()).nullable().optional(),
   github_repo: z.string().nullable().optional(),
   external_links: z.array(z.string()).nullable().optional(),
-  content_blocks: z.array(ContentBlockSchema).nullable().optional(),
+  content_blocks: z.union([
+    z.array(SafeContentBlockSchema),
+    z.object({
+      blocks: z.array(SafeContentBlockSchema),
+      version: z.string().optional(),
+      time: z.number().optional()
+    }).transform(val => val.blocks)
+  ]).nullable().optional(),
+  blocks: z.array(SafeContentBlockSchema).nullable().optional(),
   date_created: z.string().nullable().optional(),
   date_updated: z.string().nullable().optional(),
 });
@@ -203,19 +297,16 @@ export const ProfileSchema = z.object({
   linkedin_url: z.string().nullable().optional(),
 });
 
-export function parseContentBlock(raw: unknown): z.infer<typeof ContentBlockSchema> | null {
-  const parsed = z.record(z.unknown()).safeParse(raw);
-  if (!parsed.success) return null;
-  const obj = parsed.data;
-  const type = obj.type;
-  if (typeof type !== 'string') return null;
-  const content = obj.content;
-  const block = { ...obj, content: content ?? {} };
-  const result = ContentBlockSchema.safeParse(block);
+export function parseContentBlock(raw: unknown): ContentBlock | null {
+  const result = SafeContentBlockSchema.safeParse(raw);
+  if (!result.success) {
+    console.error('[Schema] Block validation failed:', result.error.flatten(), 'Raw:', raw);
+  }
   return result.success ? result.data : null;
 }
 
-export function getAssetUrl(pathOrId: string): string {
+export function getAssetUrl(pathOrId: string | null | undefined): string {
+  if (!pathOrId) return '/placeholder-thumbnail.svg';
   if (pathOrId.startsWith('http')) return pathOrId;
   const base = DIRECTUS_URL.replace(/\/$/, '');
   return pathOrId.startsWith('/') ? `${base}${pathOrId}` : `${base}/assets/${pathOrId}`;

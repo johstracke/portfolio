@@ -4,12 +4,11 @@ Complete schema definition for the portfolio Directus instance. Use this as refe
 
 ## Collections Overview
 
-1. **projects** - Main project collection
+1. **projects** - Main project collection (includes content_blocks JSON field)
 2. **blog_posts** - Blog content
-3. **content_blocks** - Flexible content blocks for projects
-4. **media_library** - Central media storage (uses Directus Files)
-5. **profile** - User/site metadata (singleton)
-6. **tags** - Tag system (shared by projects and blog)
+3. **media_library** - Central media storage (uses Directus Files)
+4. **profile** - User/site metadata (singleton)
+5. **tags** - Tag system (shared by projects and blog)
 
 ---
 
@@ -124,10 +123,9 @@ Complete schema definition for the portfolio Directus instance. Use this as refe
 - Note: "Array of external URLs"
 
 #### content_blocks
-- Type: One-to-Many (O2M)
-- Related Collection: content_blocks
-- Related Field: project_id (integer, FK to projects.id)
-- Note: "Ordered array of content blocks"
+- Type: JSON
+- Interface: List (Repeater)
+- Note: "Flexible content blocks for project pages. Supports text, image, gallery, video, cad, code, specs, callout, layout."
 
 #### date_created
 - Type: Timestamp
@@ -206,49 +204,20 @@ Complete schema definition for the portfolio Directus instance. Use this as refe
 
 ---
 
-## 3. Content Blocks Collection
+## 3. Content Blocks Configuration
 
-**Collection Settings:**
-- Collection Name: `content_blocks`
-- Icon: `widgets`
-- Display Template: `{{type}}: {{id}}`
-- Sort Field: `sort`
+Content blocks are managed via the List/Repeater interface on the `content_blocks` JSON field in the `projects` collection.
 
-### Fields:
-
-#### id (Primary Key)
-- Type: Integer (auto-increment)
-- Note: Created by setup script
-
-#### project_id
-- Type: Integer
-- Foreign Key: projects.id
-- Required: Yes
-- Note: Setup script creates as integer; matches projects.id
-
-#### type
-- Type: String
-- Interface: Dropdown
-- Required: Yes
-- Options:
-  - text
-  - image
-  - gallery
-  - video
-  - cad
-  - code
-  - specs
-  - callout
-
-#### sort
-- Type: Integer
-- Interface: Input
-- Note: "Determines display order"
-
-#### content
-- Type: JSON
-- Interface: Code (JSON mode)
-- Note: "Type-specific data structure"
+**Supported Block Types:**
+- **text**: Rich text/Markdown content.
+- **image**: Single image with caption and size options.
+- **gallery**: Multiple images with layout options.
+- **video**: External URL or Directus asset.
+- **cad**: 3D model viewer.
+- **code**: Syntax-highlighted code with filename.
+- **specs**: Technical specification tables.
+- **callout**: Highlighted informational notes.
+- **layout**: Two-column layout (left_blocks, right_blocks).
 
 **Content JSON Structures by Type:**
 
@@ -307,6 +276,14 @@ Complete schema definition for the portfolio Directus instance. Use this as refe
 {
   "content": "Important note or tip",
   "callout_type": "info" // info, warning, success, tip
+}
+
+// layout
+{
+  "layout_type": "two-column", // two-column, sidebar-left, sidebar-right
+  "left_blocks": [...],
+  "right_blocks": [...],
+  "gap": "medium" // small, medium, large
 }
 ```
 
@@ -445,15 +422,12 @@ Uses Directus built-in Files collection (`directus_files`).
 - Junction: `blog_posts_tags`
 - Fields: `id`, `blog_posts_id`, `tags_id`
 
-### One-to-Many (O2M)
+### Content Blocks (JSON)
 
-**projects → content_blocks**
-- Foreign key in `content_blocks`: `project_id`
-
-### Many-to-One (M2O)
-
-**content_blocks → directus_files**
-- Reference via UUID in JSON content field
+**projects.content_blocks**
+- JSON field on projects (List/Repeater interface)
+- Array of block objects with `type` and type-specific fields
+- File references (image_id, file_id, images) store Directus file UUIDs
 
 ---
 
@@ -511,7 +485,7 @@ if (!validated.success) {
 
 - **UUID vs Auto-increment:** Use UUID for all primary keys (Directus default)
 - **Timestamps:** `date_created` and `date_updated` are auto-managed by Directus
-- **Sort Field:** Content blocks need a `sort` field for ordering
+- **Block Order:** Content blocks array order is canonical (no separate sort field)
 - **JSON Fields:** Store complex data in JSON, validate with Zod before use
 - **File References:** Store file UUIDs, fetch full file data when needed
 
@@ -523,16 +497,18 @@ if (!validated.success) {
 ```typescript
 const projects = await directus.request(
   readItems('projects', {
-    fields: ['*', 'content_blocks.*'],
+    fields: ['*', 'content_blocks'],
   })
 )
 ```
 
-### Get project with linked blog posts:
+### Get project by slug:
 ```typescript
 const project = await directus.request(
-  readItem('projects', slug, {
-    fields: ['*', 'content_blocks.*', 'linked_posts.*'],
+  readItems('projects', {
+    filter: { slug: { _eq: slug } },
+    fields: ['*', 'content_blocks'],
+    limit: 1,
   })
 )
 ```
