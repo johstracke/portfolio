@@ -36,3 +36,4 @@ docker-compose.override.yml
 *.sql
 *.dump
 backups/
+backup-schema-*.json
