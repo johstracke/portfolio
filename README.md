@@ -114,20 +114,56 @@ types/
 
 ## Environment Variables
 
-See [.env.example](./.env.example) for complete list. Key variables:
+Copy [.env.example](./.env.example) to `.env.local` (development) or `.env` (production) and configure:
 
-- `DIRECTUS_URL` – Directus API endpoint (internal, for Next.js)
-- `NEXT_PUBLIC_DIRECTUS_URL` – Public Directus URL (for browser redirects)
-- `DIRECTUS_EMAIL` / `DIRECTUS_PASSWORD` – Admin credentials for schema setup
-- `DB_PASSWORD` – PostgreSQL password (use strong value in production)
+### Next.js (Frontend)
+- **`NEXT_PUBLIC_SITE_URL`** – Your site's public URL (e.g., `https://example.com` or `http://localhost:3000`). Used for sitemaps, Open Graph meta tags, and canonical URLs.
+- **`NEXT_PUBLIC_DIRECTUS_URL`** – Public Directus endpoint accessible from browsers (e.g., `http://localhost:8055` in dev or `https://cms.example.com` in production).
 
-## Code Quality
+### Directus API (For Next.js Data Fetching)
+- **`DIRECTUS_URL`** – Internal Directus URL (e.g., `http://directus:8055` inside Docker, or `http://localhost:8055` locally). Used by Next.js to fetch projects, blog posts, and profile data.
+- **`DIRECTUS_STATIC_TOKEN`** – (Optional) Static API token for headless API access. Skips login overhead. If set, `DIRECTUS_EMAIL` and `DIRECTUS_PASSWORD` are ignored.
+- **`DIRECTUS_EMAIL`** / **`DIRECTUS_PASSWORD`** – Admin account credentials. Used by schema setup script (`npm run directus:setup`) and as fallback for data fetching if no static token is set. **Must match the admin user created in Directus.**
 
-- **TypeScript:** Full type safety with strict mode
-- **Validation:** Zod schemas for all CMS content at runtime
-- **Linting:** ESLint via Next.js config (zero warnings)
-- **Build:** Verified with `npm run build` (static generation + SSR)
-- **Metrics:** 43 files, ~3,225 LOC, avg 75 LOC/file
+### Directus Server (Docker)
+- **`KEY`** – Random 32+ character string for session encryption. Generate: `openssl rand -base64 32`
+- **`SECRET`** – Random 32+ character string for token signing. Generate: `openssl rand -base64 32`
+- **`ADMIN_EMAIL`** – Initial admin email (created on first startup)
+- **`ADMIN_PASSWORD`** – Initial admin password (created on first startup)
+- **`PUBLIC_URL`** – Public Directus URL exposed to clients (same as `NEXT_PUBLIC_DIRECTUS_URL`)
+
+### Database (PostgreSQL)
+- **`DB_USER`** – Postgres username (default: `directus`)
+- **`DB_PASSWORD`** – Postgres password. **Use a strong random value in production.** (Default in `.env.example` is placeholder.)
+- **`DB_NAME`** – Database name (default: `directus`)
+
+### Development vs. Production
+
+**Local Development (.env.local):**
+```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+DIRECTUS_URL=http://localhost:8055
+NEXT_PUBLIC_DIRECTUS_URL=http://localhost:8055
+DIRECTUS_EMAIL=admin@example.com
+DIRECTUS_PASSWORD=your_password_here
+DB_PASSWORD=your_secure_password_here
+DIRECTUS_KEY=random-key-min-32-chars
+DIRECTUS_SECRET=random-secret-min-32-chars
+```
+
+**Production (.env on VPS):**
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+DIRECTUS_URL=http://directus:8055  # Internal Docker network
+NEXT_PUBLIC_DIRECTUS_URL=https://cms.your-domain.com
+DIRECTUS_EMAIL=admin@your-domain.com
+DIRECTUS_PASSWORD=strong_random_password
+DB_PASSWORD=strong_random_password
+DIRECTUS_KEY=<random 32+ char string>
+DIRECTUS_SECRET=<random 32+ char string>
+```
+
+See [DIRECTUS_SETUP.md](./DIRECTUS_SETUP.md) for detailed setup instructions.
 
 ## License
 
