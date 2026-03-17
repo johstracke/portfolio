@@ -37,7 +37,7 @@ export default async function NowPage() {
           </p>
           {profile?.next_location && profile?.location_change_date && (
             <p className="mt-1 text-sm text-ink/60">
-              Moving {formatDate(profile.location_change_date)}
+              Moving {formatDate(profile.location_change_date ?? undefined)}
             </p>
           )}
         </div>
@@ -94,8 +94,8 @@ export default async function NowPage() {
                 <div>
                   <h3 className="text-xl font-bold">{project.title}</h3>
                   <p className="text-sm text-ink/80">
-                    Started {formatDate(project.start_date)}
-                    {project.end_date ? `, updated through ${formatDate(project.end_date)}` : ''}
+                    Started {formatDate(project.start_date ?? undefined)}
+                    {project.end_date ? `, updated through ${formatDate(project.end_date ?? undefined)}` : ''}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">

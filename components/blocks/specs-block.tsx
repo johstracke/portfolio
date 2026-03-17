@@ -2,24 +2,18 @@ import type { ContentBlock } from '@/types';
 
 type Props = Extract<ContentBlock, { type: 'specs' }>;
 
-export function SpecsBlock({ content }: Props) {
+export function SpecsBlock({ title, rows }: Props) {
   return (
-    <section className="border-[3px] border-black bg-surface p-5 shadow-brutal-sm">
-      {content.title ? <h3 className="mb-4 text-xl font-bold">{content.title}</h3> : null}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <tbody>
-            {content.rows.map((row) => (
-              <tr key={`${row.key}-${row.value}`} className="border-t-[2px] border-black first:border-t-0">
-                <th className="w-1/3 py-3 pr-4 text-left align-top text-sm font-bold uppercase">
-                  {row.key}
-                </th>
-                <td className="py-3 text-sm text-ink/85">{row.value}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="border-[3px] border-black bg-surface p-6 shadow-brutal-sm">
+      {title && <h3 className="mb-4 text-xl font-bold uppercase tracking-tight">{title}</h3>}
+      <div className="divide-y-[2px] divide-black/10">
+        {rows.map((row: { key: string; value: string }, i: number) => (
+          <div key={i} className="flex justify-between py-3 text-sm">
+            <span className="font-medium text-ink/60">{row.key}</span>
+            <span className="font-bold text-ink">{row.value}</span>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }

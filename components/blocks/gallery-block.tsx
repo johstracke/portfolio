@@ -10,13 +10,13 @@ const layoutClasses = {
   masonry: 'columns-2 md:columns-3 gap-4 space-y-4',
 };
 
-export function GalleryBlock({ content }: Props) {
-  const layout = content.layout ?? 'grid';
+export function GalleryBlock({ images, layout, caption }: Props) {
+  const currentLayout = (layout ?? 'grid') as keyof typeof layoutClasses;
 
   return (
     <figure className="border-[3px] border-black bg-surface p-4 shadow-brutal-sm">
-      <div className={layoutClasses[layout]}>
-        {content.images.map((id, i) => (
+      <div className={layoutClasses[currentLayout]}>
+        {images.map((id: string, i: number) => (
           <div key={id} className="relative overflow-hidden border-[2px] border-black">
             <Image
               src={getAssetUrl(id)}
@@ -28,8 +28,8 @@ export function GalleryBlock({ content }: Props) {
           </div>
         ))}
       </div>
-      {content.caption && (
-        <figcaption className="mt-3 text-sm text-ink/80">{content.caption}</figcaption>
+      {caption && (
+        <figcaption className="mt-3 text-sm text-ink/80">{caption}</figcaption>
       )}
     </figure>
   );

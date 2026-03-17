@@ -24,6 +24,12 @@ const WHAT_I_BUILD = [
   },
 ] as const;
 
+function toTimestamp(value: string | null | undefined) {
+  if (!value) return 0;
+  const ts = Date.parse(value);
+  return Number.isNaN(ts) ? 0 : ts;
+}
+
 export default async function HomePage() {
   const [profile, projects, blogPosts] = await Promise.all([
     getProfile(),
@@ -40,7 +46,7 @@ export default async function HomePage() {
       date: p.date_updated ?? p.date_created ?? p.start_date,
     })),
   ]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date))
     .slice(0, 5);
 
   return (

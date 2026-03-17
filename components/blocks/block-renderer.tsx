@@ -1,13 +1,14 @@
-import type { ContentBlock } from '@/types';
+import type { ContentBlock } from '@/lib/schemas';
 import { parseContentBlock } from '@/lib/schemas';
 import { TextBlock } from './text-block';
 import { ImageBlock } from './image-block';
 import { GalleryBlock } from './gallery-block';
 import { CodeBlock } from './code-block';
 import { VideoBlock } from './video-block';
-import { CadBlock } from './cad-block';
+import { CADBlock as CadBlock } from './cad-block';
 import { SpecsBlock } from './specs-block';
 import { CalloutBlock } from './callout-block';
+import { LayoutBlock } from './layout-block';
 
 type Props = {
   blocks: unknown[];
@@ -39,6 +40,8 @@ export function BlockRenderer({ blocks }: Props) {
             return <SpecsBlock key={block.id ?? i} {...block} />;
           case 'callout':
             return <CalloutBlock key={block.id ?? i} {...block} />;
+          case 'layout':
+            return <LayoutBlock key={block.id ?? i} {...block} />;
           default:
             return null;
         }

@@ -33,7 +33,7 @@ export function ProjectCard({ project }: Props) {
             <Badge key={d}>{d}</Badge>
           ))}
         </div>
-        <p className="text-xs text-ink/60 mt-2">{formatDate(project.start_date)}</p>
+        <p className="text-xs text-ink/60 mt-2">{formatDate(project.start_date ?? undefined)}</p>
       </div>
     </Link>
   );

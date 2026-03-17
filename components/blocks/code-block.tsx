@@ -1,19 +1,22 @@
-import type { ContentBlock } from '@/types';
+import type { ContentBlock } from '@/lib/schemas';
 
 type Props = Extract<ContentBlock, { type: 'code' }>;
 
-export function CodeBlock({ content }: Props) {
+export function CodeBlock({ code, language, description, filename }: Props) {
   return (
-    <div className="border-[3px] border-black bg-ink text-white p-4 shadow-brutal-sm overflow-x-auto">
-      {content.filename && (
-        <div className="text-xs text-white/70 mb-2 font-mono">{content.filename}</div>
+    <div className="space-y-3 bg-surface border-[3px] border-black p-6 shadow-brutal-sm">
+      {filename && (
+        <div className="flex items-center gap-2 border-b-[2px] border-black pb-2 mb-2">
+          <span className="text-xs font-mono font-bold text-ink/50 uppercase tracking-widest">File:</span>
+          <span className="text-xs font-mono font-bold text-brand">{filename}</span>
+        </div>
       )}
-      <pre className="font-mono text-sm whitespace-pre">
-        <code>{content.code}</code>
-      </pre>
-      {content.description && (
-        <p className="mt-2 text-sm text-white/80">{content.description}</p>
-      )}
+      {description && <p className="text-sm font-medium text-ink/70">{description}</p>}
+      <div className="relative overflow-x-auto bg-[#1A1A1A] p-4 text-sm text-pink-400 font-mono border-[2px] border-black">
+        <pre className="whitespace-pre-wrap break-all">
+          <code className={language ? `language-${language}` : ''}>{code}</code>
+        </pre>
+      </div>
     </div>
   );
 }

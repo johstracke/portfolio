@@ -11,22 +11,22 @@ const sizeClasses = {
   'full-width': 'w-full',
 };
 
-export function ImageBlock({ content }: Props) {
-  const src = getAssetUrl(content.image_id);
-  const size = content.size ?? 'medium';
+export function ImageBlock({ image_id, caption, size }: Props) {
+  const src = getAssetUrl(image_id);
+  const currentSize = (size ?? 'medium') as keyof typeof sizeClasses;
 
   return (
-    <figure className={`${sizeClasses[size]} border-[3px] border-black bg-surface shadow-brutal-sm overflow-hidden`}>
+    <figure className={`${sizeClasses[currentSize]} border-[3px] border-black bg-surface shadow-brutal-sm overflow-hidden`}>
       <Image
         src={src}
-        alt={content.caption ?? ''}
+        alt={caption ?? ''}
         width={800}
         height={600}
         className="w-full h-auto object-cover"
       />
-      {content.caption && (
+      {caption && (
         <figcaption className="p-3 text-sm text-ink/80 border-t-[3px] border-black">
-          {content.caption}
+          {caption}
         </figcaption>
       )}
     </figure>
