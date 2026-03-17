@@ -10,12 +10,12 @@ git clone <your-repo>
 cd Portfolio
 npm install
 
-# 2. Start Directus + PostgreSQL
-docker compose up -d postgres directus
-
-# 3. Set up environment
+# 2. Set up environment
 cp .env.example .env.local
 # Edit .env.local with a strong DB_PASSWORD and admin credentials
+
+# 3. Start Directus + PostgreSQL
+docker compose up -d postgres directus
 
 # 4. Initialize Directus schema and start dev server
 npm run directus:setup
