@@ -6,6 +6,7 @@
 import {
   createDirectus,
   rest,
+  staticToken,
   authentication,
   createCollection,
   createField,
@@ -14,15 +15,38 @@ import {
 } from '@directus/sdk';
 
 const DIRECTUS_URL = process.env.DIRECTUS_URL || 'http://localhost:8055';
+const DIRECTUS_STATIC_TOKEN = process.env.DIRECTUS_STATIC_TOKEN;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
 
-const client = createDirectus(DIRECTUS_URL).with(rest()).with(authentication());
+async function getClient() {
+  if (DIRECTUS_STATIC_TOKEN) {
+    return createDirectus(DIRECTUS_URL).with(rest()).with(staticToken(DIRECTUS_STATIC_TOKEN));
+  }
+
+  const client = createDirectus(DIRECTUS_URL).with(rest()).with(authentication('json'));
+  await client.login(ADMIN_EMAIL, ADMIN_PASSWORD, { mode: 'json' });
+  return client;
+}
+
+const PROJECT_BLOCK_COLLECTIONS = [
+  'project_blocks_text',
+  'project_blocks_image',
+  'project_blocks_gallery',
+  'project_blocks_video',
+  'project_blocks_cad',
+  'project_blocks_code',
+  'project_blocks_specs',
+  'project_blocks_callout',
+  'project_blocks_layout',
+] as const;
+
+const LAYOUT_ALLOWED_COLLECTIONS = PROJECT_BLOCK_COLLECTIONS.filter((name) => name !== 'project_blocks_layout');
 
 async function main() {
   console.log('Connecting to Directus at', DIRECTUS_URL);
-  await client.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-  console.log('Logged in successfully');
+  const client = await getClient();
+  console.log('Authenticated successfully');
 
   const existing = await client.request(readCollections());
   const names = new Set((existing as { collection: string }[]).map((c) => c.collection));
@@ -46,7 +70,7 @@ async function main() {
   const ensureField = async (
     collection: string,
     field: string,
-    spec: { type: string; meta?: Record<string, unknown>; schema?: Record<string, unknown> }
+    spec: { type: string; meta?: Record<string, unknown>; schema?: Record<string, unknown> | null }
   ) => {
     try {
       await client.request(
@@ -54,7 +78,7 @@ async function main() {
           field,
           type: spec.type as never,
           meta: spec.meta || {},
-          schema: spec.schema || {},
+          schema: spec.schema === undefined ? {} : spec.schema,
         })
       );
       console.log('    Created field', collection + '.' + field);
@@ -63,6 +87,20 @@ async function main() {
       if (err?.errors?.[0]?.message?.includes('already exists')) {
         console.log('    Field', collection + '.' + field, 'already exists');
       } else throw e;
+    }
+  };
+
+  const ensureRelation = async (payload: Record<string, unknown>, label: string) => {
+    try {
+      await client.request(createRelation(payload as never));
+      console.log('    Created relation', label);
+    } catch (e: unknown) {
+      const msg = (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ?? '';
+      if (msg.includes('already exists') || msg.includes('duplicate key')) {
+        console.log('    Relation', label, 'already exists');
+      } else {
+        throw e;
+      }
     }
   };
 
@@ -174,44 +212,520 @@ async function main() {
     schema: {},
   });
 
-  console.log('\nCreating content_blocks collection...');
-  await ensureCollection('content_blocks');
-  await ensureField('content_blocks', 'project_id', {
-    type: 'integer',
-    meta: { interface: 'input', required: true, width: 'full' },
+  console.log('\nCreating content_blocks JSON field on projects...');
+  await ensureField('projects', 'content_blocks', {
+    type: 'json',
+    meta: {
+      interface: 'list',
+      note: 'Flexible content blocks for project pages',
+      options: {
+        template: '{{type}}',
+        createNewLabel: 'Add Block',
+        sort: true,
+      },
+    },
     schema: {},
   });
-  await ensureField('content_blocks', 'type', {
+
+  console.log('\nCreating M2A block collections...');
+  await ensureCollection('project_blocks_text', { hidden: true, icon: 'box' });
+  await ensureField('project_blocks_text', 'content', {
+    type: 'text',
+    meta: { interface: 'input-multiline' },
+    schema: {},
+  });
+
+  await ensureCollection('project_blocks_image', { hidden: true, icon: 'image' });
+  await ensureField('project_blocks_image', 'image_id', {
+    type: 'uuid',
+    meta: { interface: 'file-image' },
+    schema: { foreign_key_table: 'directus_files', foreign_key_column: 'id' },
+  });
+  await ensureField('project_blocks_image', 'caption', {
+    type: 'string',
+    meta: { interface: 'input' },
+    schema: {},
+  });
+  await ensureField('project_blocks_image', 'size', {
     type: 'string',
     meta: {
-      interface: 'select-dropdown-m2o',
-      required: true,
-      width: 'half',
+      interface: 'select-dropdown',
       options: {
         choices: [
-          { text: 'text', value: 'text' },
-          { text: 'image', value: 'image' },
-          { text: 'gallery', value: 'gallery' },
-          { text: 'video', value: 'video' },
-          { text: 'cad', value: 'cad' },
-          { text: 'code', value: 'code' },
-          { text: 'specs', value: 'specs' },
-          { text: 'callout', value: 'callout' },
+          { text: 'Small', value: 'small' },
+          { text: 'Medium', value: 'medium' },
+          { text: 'Large', value: 'large' },
+          { text: 'Full Width', value: 'full-width' },
         ],
       },
     },
-    schema: { max_length: 50 },
+    schema: { default_value: 'medium' },
   });
-  await ensureField('content_blocks', 'sort', {
-    type: 'integer',
-    meta: { interface: 'input', width: 'half' },
-    schema: { default_value: 0 },
+
+  await ensureCollection('project_blocks_gallery', { hidden: true, icon: 'photo_library' });
+  await ensureField('project_blocks_gallery', 'layout', {
+    type: 'string',
+    meta: {
+      interface: 'select-dropdown',
+      options: {
+        choices: [
+          { text: 'Grid', value: 'grid' },
+          { text: 'Carousel', value: 'carousel' },
+          { text: 'Masonry', value: 'masonry' },
+        ],
+      },
+    },
+    schema: { default_value: 'grid' },
   });
-  await ensureField('content_blocks', 'content', {
-    type: 'json',
-    meta: { interface: 'input-code', width: 'full', options: { language: 'json' } },
+  await ensureField('project_blocks_gallery', 'caption', {
+    type: 'string',
+    meta: { interface: 'input' },
     schema: {},
   });
+  await ensureField('project_blocks_gallery', 'images', {
+    type: 'alias',
+    meta: { interface: 'files', special: ['files'] },
+    schema: null,
+  });
+
+  await ensureCollection('project_blocks_video', { hidden: true, icon: 'movie' });
+  await ensureField('project_blocks_video', 'video_id', {
+    type: 'string',
+    meta: { interface: 'input' },
+    schema: {},
+  });
+  await ensureField('project_blocks_video', 'caption', {
+    type: 'string',
+    meta: { interface: 'input' },
+    schema: {},
+  });
+  await ensureField('project_blocks_video', 'autoplay', {
+    type: 'boolean',
+    meta: { interface: 'toggle' },
+    schema: { default_value: false },
+  });
+
+  await ensureCollection('project_blocks_cad', { hidden: true, icon: 'view_in_ar' });
+  await ensureField('project_blocks_cad', 'file_id', {
+    type: 'uuid',
+    meta: { interface: 'file' },
+    schema: { foreign_key_table: 'directus_files', foreign_key_column: 'id' },
+  });
+  await ensureField('project_blocks_cad', 'viewer_type', {
+    type: 'string',
+    meta: {
+      interface: 'select-dropdown',
+      options: {
+        choices: [
+          { text: 'Preview Image', value: 'preview_image' },
+          { text: 'Download Link', value: 'download_link' },
+          { text: 'Embed', value: 'embed' },
+        ],
+      },
+    },
+    schema: { default_value: 'preview_image' },
+  });
+  await ensureField('project_blocks_cad', 'description', {
+    type: 'text',
+    meta: { interface: 'input-multiline' },
+    schema: {},
+  });
+
+  await ensureCollection('project_blocks_code', { hidden: true, icon: 'code' });
+  await ensureField('project_blocks_code', 'code', {
+    type: 'text',
+    meta: { interface: 'input-code' },
+    schema: {},
+  });
+  await ensureField('project_blocks_code', 'language', {
+    type: 'string',
+    meta: { interface: 'input' },
+    schema: { default_value: 'text' },
+  });
+  await ensureField('project_blocks_code', 'filename', {
+    type: 'string',
+    meta: { interface: 'input' },
+    schema: {},
+  });
+  await ensureField('project_blocks_code', 'description', {
+    type: 'text',
+    meta: { interface: 'input-multiline' },
+    schema: {},
+  });
+
+  await ensureCollection('project_blocks_specs', { hidden: true, icon: 'table_rows' });
+  await ensureField('project_blocks_specs', 'title', {
+    type: 'string',
+    meta: { interface: 'input' },
+    schema: {},
+  });
+  await ensureField('project_blocks_specs', 'rows', {
+    type: 'json',
+    meta: { interface: 'list' },
+    schema: {},
+  });
+
+  await ensureCollection('project_blocks_callout', { hidden: true, icon: 'info' });
+  await ensureField('project_blocks_callout', 'content', {
+    type: 'text',
+    meta: { interface: 'input-multiline' },
+    schema: {},
+  });
+  await ensureField('project_blocks_callout', 'callout_type', {
+    type: 'string',
+    meta: {
+      interface: 'select-dropdown',
+      options: {
+        choices: [
+          { text: 'Info', value: 'info' },
+          { text: 'Warning', value: 'warning' },
+          { text: 'Success', value: 'success' },
+          { text: 'Tip', value: 'tip' },
+        ],
+      },
+    },
+    schema: { default_value: 'info' },
+  });
+
+  await ensureCollection('project_blocks_layout', { hidden: true, icon: 'view_column' });
+  await ensureField('project_blocks_layout', 'layout_type', {
+    type: 'string',
+    meta: {
+      interface: 'select-dropdown',
+      options: {
+        choices: [
+          { text: 'Two Column', value: 'two-column' },
+          { text: 'Sidebar Left', value: 'sidebar-left' },
+          { text: 'Sidebar Right', value: 'sidebar-right' },
+        ],
+      },
+    },
+    schema: { default_value: 'two-column' },
+  });
+  await ensureField('project_blocks_layout', 'gap', {
+    type: 'string',
+    meta: {
+      interface: 'select-dropdown',
+      options: {
+        choices: [
+          { text: 'Small', value: 'small' },
+          { text: 'Medium', value: 'medium' },
+          { text: 'Large', value: 'large' },
+        ],
+      },
+    },
+    schema: { default_value: 'medium' },
+  });
+  await ensureField('project_blocks_layout', 'left_blocks', {
+    type: 'alias',
+    meta: {
+      interface: 'list-m2a',
+      special: ['m2a'],
+      options: {
+        template: '{{collection}}',
+        enableCreate: true,
+        enableSelect: true,
+        allowNone: true,
+        allowDuplicates: false,
+      },
+    },
+    schema: null,
+  });
+  await ensureField('project_blocks_layout', 'right_blocks', {
+    type: 'alias',
+    meta: {
+      interface: 'list-m2a',
+      special: ['m2a'],
+      options: {
+        template: '{{collection}}',
+        enableCreate: true,
+        enableSelect: true,
+        allowNone: true,
+        allowDuplicates: false,
+      },
+    },
+    schema: null,
+  });
+
+  console.log('\nCreating M2A junction collections...');
+  await ensureCollection('project_blocks_gallery_files', { hidden: true, icon: 'import_export' });
+  await ensureField('project_blocks_gallery_files', 'project_blocks_gallery_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'project_blocks_gallery', foreign_key_column: 'id' },
+  });
+  await ensureField('project_blocks_gallery_files', 'directus_files_id', {
+    type: 'uuid',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'directus_files', foreign_key_column: 'id' },
+  });
+  await ensureField('project_blocks_gallery_files', 'sort', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: {},
+  });
+
+  await ensureCollection('projects_blocks', { hidden: true, icon: 'import_export' });
+  await ensureField('projects_blocks', 'projects_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'projects', foreign_key_column: 'id' },
+  });
+  await ensureField('projects_blocks', 'item', {
+    type: 'string',
+    meta: { hidden: true },
+    schema: {},
+  });
+  await ensureField('projects_blocks', 'collection', {
+    type: 'string',
+    meta: { hidden: true },
+    schema: {},
+  });
+  await ensureField('projects_blocks', 'sort', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: {},
+  });
+
+  await ensureCollection('project_blocks_layout_left', { hidden: true, icon: 'import_export' });
+  await ensureField('project_blocks_layout_left', 'project_blocks_layout_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'project_blocks_layout', foreign_key_column: 'id' },
+  });
+  await ensureField('project_blocks_layout_left', 'item', {
+    type: 'string',
+    meta: { hidden: true },
+    schema: {},
+  });
+  await ensureField('project_blocks_layout_left', 'collection', {
+    type: 'string',
+    meta: { hidden: true },
+    schema: {},
+  });
+  await ensureField('project_blocks_layout_left', 'sort', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: {},
+  });
+
+  await ensureCollection('project_blocks_layout_right', { hidden: true, icon: 'import_export' });
+  await ensureField('project_blocks_layout_right', 'project_blocks_layout_id', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: { foreign_key_table: 'project_blocks_layout', foreign_key_column: 'id' },
+  });
+  await ensureField('project_blocks_layout_right', 'item', {
+    type: 'string',
+    meta: { hidden: true },
+    schema: {},
+  });
+  await ensureField('project_blocks_layout_right', 'collection', {
+    type: 'string',
+    meta: { hidden: true },
+    schema: {},
+  });
+  await ensureField('project_blocks_layout_right', 'sort', {
+    type: 'integer',
+    meta: { hidden: true },
+    schema: {},
+  });
+
+  console.log('\nCreating M2A relations for blocks...');
+  await ensureRelation(
+    {
+      collection: 'project_blocks_image',
+      field: 'image_id',
+      related_collection: 'directus_files',
+      schema: {
+        table: 'project_blocks_image',
+        column: 'image_id',
+        foreign_key_table: 'directus_files',
+        foreign_key_column: 'id',
+      },
+    },
+    'project_blocks_image.image_id -> directus_files'
+  );
+  await ensureRelation(
+    {
+      collection: 'project_blocks_cad',
+      field: 'file_id',
+      related_collection: 'directus_files',
+      schema: {
+        table: 'project_blocks_cad',
+        column: 'file_id',
+        foreign_key_table: 'directus_files',
+        foreign_key_column: 'id',
+      },
+    },
+    'project_blocks_cad.file_id -> directus_files'
+  );
+  await ensureRelation(
+    {
+      collection: 'project_blocks_gallery_files',
+      field: 'project_blocks_gallery_id',
+      related_collection: 'project_blocks_gallery',
+      meta: {
+        many_collection: 'project_blocks_gallery_files',
+        many_field: 'project_blocks_gallery_id',
+        one_collection: 'project_blocks_gallery',
+        one_field: 'images',
+      },
+      schema: {
+        table: 'project_blocks_gallery_files',
+        column: 'project_blocks_gallery_id',
+        foreign_key_table: 'project_blocks_gallery',
+        foreign_key_column: 'id',
+      },
+    },
+    'project_blocks_gallery_files.project_blocks_gallery_id -> project_blocks_gallery'
+  );
+  await ensureRelation(
+    {
+      collection: 'project_blocks_gallery_files',
+      field: 'directus_files_id',
+      related_collection: 'directus_files',
+      schema: {
+        table: 'project_blocks_gallery_files',
+        column: 'directus_files_id',
+        foreign_key_table: 'directus_files',
+        foreign_key_column: 'id',
+      },
+    },
+    'project_blocks_gallery_files.directus_files_id -> directus_files'
+  );
+
+  await ensureField('projects', 'blocks', {
+    type: 'alias',
+    meta: {
+      interface: 'list-m2a',
+      special: ['m2a'],
+      options: {
+        template: '{{collection}}',
+        enableCreate: true,
+        enableSelect: true,
+        allowNone: true,
+        allowDuplicates: false,
+      },
+    },
+    schema: null,
+  });
+
+  await ensureRelation(
+    {
+      collection: 'projects_blocks',
+      field: 'projects_id',
+      related_collection: 'projects',
+      meta: {
+        many_collection: 'projects_blocks',
+        many_field: 'projects_id',
+        one_collection: 'projects',
+        one_field: 'blocks',
+        junction_field: 'item',
+        sort_field: 'sort',
+        one_deselect_action: 'delete',
+      },
+      schema: {
+        table: 'projects_blocks',
+        column: 'projects_id',
+        foreign_key_table: 'projects',
+        foreign_key_column: 'id',
+        on_delete: 'CASCADE',
+      },
+    },
+    'projects_blocks.projects_id -> projects.blocks'
+  );
+  await ensureRelation(
+    {
+      collection: 'projects_blocks',
+      field: 'item',
+      related_collection: null,
+      meta: {
+        many_collection: 'projects_blocks',
+        many_field: 'item',
+        one_collection: null,
+        one_field: null,
+        one_collection_field: 'collection',
+        one_allowed_collections: PROJECT_BLOCK_COLLECTIONS,
+        junction_field: 'projects_id',
+      },
+      schema: null,
+    },
+    'projects_blocks.item -> polymorphic project blocks'
+  );
+
+  await ensureRelation(
+    {
+      collection: 'project_blocks_layout_left',
+      field: 'project_blocks_layout_id',
+      related_collection: 'project_blocks_layout',
+      meta: {
+        many_collection: 'project_blocks_layout_left',
+        many_field: 'project_blocks_layout_id',
+        one_collection: 'project_blocks_layout',
+        one_field: 'left_blocks',
+        junction_field: 'item',
+        sort_field: 'sort',
+        one_deselect_action: 'delete',
+      },
+      schema: null,
+    },
+    'project_blocks_layout_left.project_blocks_layout_id -> project_blocks_layout.left_blocks'
+  );
+  await ensureRelation(
+    {
+      collection: 'project_blocks_layout_left',
+      field: 'item',
+      related_collection: null,
+      meta: {
+        many_collection: 'project_blocks_layout_left',
+        many_field: 'item',
+        one_collection: null,
+        one_field: null,
+        one_collection_field: 'collection',
+        one_allowed_collections: LAYOUT_ALLOWED_COLLECTIONS,
+        junction_field: 'project_blocks_layout_id',
+      },
+      schema: null,
+    },
+    'project_blocks_layout_left.item -> polymorphic nested left blocks'
+  );
+  await ensureRelation(
+    {
+      collection: 'project_blocks_layout_right',
+      field: 'project_blocks_layout_id',
+      related_collection: 'project_blocks_layout',
+      meta: {
+        many_collection: 'project_blocks_layout_right',
+        many_field: 'project_blocks_layout_id',
+        one_collection: 'project_blocks_layout',
+        one_field: 'right_blocks',
+        junction_field: 'item',
+        sort_field: 'sort',
+        one_deselect_action: 'delete',
+      },
+      schema: null,
+    },
+    'project_blocks_layout_right.project_blocks_layout_id -> project_blocks_layout.right_blocks'
+  );
+  await ensureRelation(
+    {
+      collection: 'project_blocks_layout_right',
+      field: 'item',
+      related_collection: null,
+      meta: {
+        many_collection: 'project_blocks_layout_right',
+        many_field: 'item',
+        one_collection: null,
+        one_field: null,
+        one_collection_field: 'collection',
+        one_allowed_collections: LAYOUT_ALLOWED_COLLECTIONS,
+        junction_field: 'project_blocks_layout_id',
+      },
+      schema: null,
+    },
+    'project_blocks_layout_right.item -> polymorphic nested right blocks'
+  );
 
   console.log('\nCreating blog_posts collection...');
   await ensureCollection('blog_posts');

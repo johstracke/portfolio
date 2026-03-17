@@ -7,10 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "directus:schema": "npx tsx scripts/directus-schema-setup.ts",
-    "directus:snapshot": "npx directus schema snapshot ./directus-schema.json",
-    "directus:seed": "npx tsx scripts/seed-projects.ts",
-    "directus:verify": "npx tsx scripts/verify-directus-contract.ts"
+    "directus:setup": "npx tsx scripts/directus-schema-setup.ts",
+    "directus:snapshot": "npx directus schema snapshot ./directus-schema.json"
   },
   "dependencies": {
     "@directus/sdk": "^17.0.0",
