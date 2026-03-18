@@ -45,7 +45,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     (project.external_links?.length ?? 0) > 0;
 
   return (
-    <article className="container mx-auto px-4 py-12">
+    <article className="mx-auto w-full max-w-[1600px] px-4 py-12">
       <Link
         href="/projects"
         className="inline-block text-sm font-bold text-ink/70 hover:text-ink mb-6"
@@ -87,7 +87,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         </p>
       </header>
 
-      <div className={hasMeta ? 'grid gap-8 lg:grid-cols-[280px_1fr]' : ''}>
+      <div className={hasMeta ? 'grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]' : ''}>
         {hasMeta && (
           <aside className="lg:sticky lg:top-8 h-fit">
             <div className="border-[3px] border-black bg-surface p-6 shadow-brutal-sm space-y-4">
@@ -146,7 +146,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             </div>
           </aside>
         )}
-        <div className="max-w-3xl">
+        <div className="min-w-0 w-full">
           <BlockRenderer blocks={blocks} />
         </div>
       </div>
