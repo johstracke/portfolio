@@ -36,7 +36,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     notFound();
   }
 
-  const blocks = (project.blocks?.length ? project.blocks : project.content_blocks) ?? [];
+  const blocks = project.blocks ?? [];
   const hasMeta =
     (project.tools_used?.length ?? 0) > 0 ||
     (project.collaborators?.length ?? 0) > 0 ||

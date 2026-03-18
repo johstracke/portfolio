@@ -256,14 +256,6 @@ export const ProjectSchema = z.object({
   tools_used: z.array(z.string()).nullable().optional(),
   github_repo: z.string().nullable().optional(),
   external_links: z.array(z.string()).nullable().optional(),
-  content_blocks: z.union([
-    z.array(SafeContentBlockSchema),
-    z.object({
-      blocks: z.array(SafeContentBlockSchema),
-      version: z.string().optional(),
-      time: z.number().optional()
-    }).transform(val => val.blocks)
-  ]).nullable().optional(),
   blocks: z.array(SafeContentBlockSchema).nullable().optional(),
   date_created: z.string().nullable().optional(),
   date_updated: z.string().nullable().optional(),

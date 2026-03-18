@@ -44,7 +44,6 @@
     { "collection": "projects", "field": "tools_used", "type": "json", "meta": { "interface": "tags" }, "schema": {} },
     { "collection": "projects", "field": "github_repo", "type": "string", "meta": { "interface": "input" }, "schema": {} },
     { "collection": "projects", "field": "external_links", "type": "json", "meta": { "interface": "list" }, "schema": {} },
-    { "collection": "projects", "field": "content_blocks", "type": "json", "meta": { "interface": "list", "note": "Flexible content blocks for project pages", "options": { "template": "{{type}}", "createNewLabel": "Add Block", "sort": true } }, "schema": {} },
     { "collection": "blog_posts", "field": "id", "type": "uuid", "meta": {}, "schema": { "is_primary_key": true, "has_auto_increment": false } },
     { "collection": "blog_posts", "field": "title", "type": "string", "meta": { "interface": "input", "required": true }, "schema": { "max_length": 255 } },
     { "collection": "blog_posts", "field": "slug", "type": "string", "meta": { "interface": "input", "required": true }, "schema": { "max_length": 255, "is_unique": true } },

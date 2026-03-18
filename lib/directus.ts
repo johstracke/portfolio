@@ -44,17 +44,36 @@ async function getCmsClient() {
   return cmsClient;
 }
 
+const PROJECT_BASE_FIELDS = [
+  'id',
+  'title',
+  'slug',
+  'thumbnail',
+  'start_date',
+  'end_date',
+  'status',
+  'short_summary',
+  'context',
+  'domains',
+  'collaborators',
+  'duration',
+  'tools_used',
+  'github_repo',
+  'external_links',
+  'date_created',
+  'date_updated',
+] as const;
+
 export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> {
   try {
     const cmsClient = await getCmsClient();
     const query: Record<string, unknown> = {
       fields: [
-        '*',
+        ...PROJECT_BASE_FIELDS,
         'tags.tags_id.id',
         'tags.tags_id.name',
         'tags.tags_id.slug',
         'tags.tags_id.color',
-        'content_blocks',
         'blocks.*',
         'blocks.item.*',
         'blocks.item.images.*',
@@ -115,12 +134,11 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
       readItems('projects', {
         filter: { slug: { _eq: slug } },
         fields: [
-          '*',
+          ...PROJECT_BASE_FIELDS,
           'tags.tags_id.id',
           'tags.tags_id.name',
           'tags.tags_id.slug',
           'tags.tags_id.color',
-          'content_blocks',
           'blocks.*',
           'blocks.item.*',
           'blocks.item.images.*',
