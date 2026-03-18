@@ -62,25 +62,41 @@ const PROJECT_BASE_FIELDS = [
   'external_links',
 ] as const;
 
+const PROJECT_BLOCK_FIELDS = [
+  'blocks.*',
+  'blocks.item.id',
+  'blocks.item.content',
+  'blocks.item.image_id',
+  'blocks.item.caption',
+  'blocks.item.size',
+  'blocks.item.images.*',
+  'blocks.item.layout',
+  'blocks.item.video_id',
+  'blocks.item.autoplay',
+  'blocks.item.file_id',
+  'blocks.item.viewer_type',
+  'blocks.item.description',
+  'blocks.item.code',
+  'blocks.item.language',
+  'blocks.item.filename',
+  'blocks.item.rows',
+  'blocks.item.title',
+  'blocks.item.callout_type',
+  'blocks.item.layout_type',
+  'blocks.item.gap',
+] as const;
+
 export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> {
   try {
     const cmsClient = await getCmsClient();
-    const query: Record<string, unknown> = {
+    const baseQuery: Record<string, unknown> = {
       fields: [
         ...PROJECT_BASE_FIELDS,
         'tags.tags_id.id',
         'tags.tags_id.name',
         'tags.tags_id.slug',
         'tags.tags_id.color',
-        'blocks.*',
-        'blocks.item.*',
-        'blocks.item.images.*',
-        'blocks.item.left_blocks.*',
-        'blocks.item.left_blocks.item.*',
-        'blocks.item.left_blocks.item.images.*',
-        'blocks.item.right_blocks.*',
-        'blocks.item.right_blocks.item.*',
-        'blocks.item.right_blocks.item.images.*',
+        ...PROJECT_BLOCK_FIELDS,
       ],
       sort: ['-start_date'],
     };
@@ -99,15 +115,15 @@ export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> 
       filterParts.context = { _eq: filters.context };
     }
     if (Object.keys(filterParts).length > 0) {
-      query.filter = filterParts;
+      baseQuery.filter = filterParts;
     }
     if (filters?.search) {
-      query.search = filters.search;
+      baseQuery.search = filters.search;
     }
 
-    const items = await cmsClient.request(
-      readItems('projects', query as never)
-    ) as unknown[];
+    const items = (await cmsClient.request(
+      readItems('projects', baseQuery as never)
+    )) as unknown[];
 
     const results: Project[] = [];
     for (const item of items) {
@@ -128,27 +144,21 @@ export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
     const cmsClient = await getCmsClient();
+    const baseQuery: Record<string, unknown> = {
+      filter: { slug: { _eq: slug } },
+      fields: [
+        ...PROJECT_BASE_FIELDS,
+        'tags.tags_id.id',
+        'tags.tags_id.name',
+        'tags.tags_id.slug',
+        'tags.tags_id.color',
+        ...PROJECT_BLOCK_FIELDS,
+      ],
+      limit: 1,
+    };
+
     const items = (await cmsClient.request(
-      readItems('projects', {
-        filter: { slug: { _eq: slug } },
-        fields: [
-          ...PROJECT_BASE_FIELDS,
-          'tags.tags_id.id',
-          'tags.tags_id.name',
-          'tags.tags_id.slug',
-          'tags.tags_id.color',
-          'blocks.*',
-          'blocks.item.*',
-          'blocks.item.images.*',
-          'blocks.item.left_blocks.*',
-          'blocks.item.left_blocks.item.*',
-          'blocks.item.left_blocks.item.images.*',
-          'blocks.item.right_blocks.*',
-          'blocks.item.right_blocks.item.*',
-          'blocks.item.right_blocks.item.images.*',
-        ],
-        limit: 1,
-      } as never)
+      readItems('projects', baseQuery as never)
     )) as unknown[];
 
     const item = items[0];
