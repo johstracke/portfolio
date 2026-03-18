@@ -198,6 +198,18 @@ export const SafeContentBlockSchema: z.ZodType<ContentBlock> = z.preprocess((val
   return block;
 }, z.lazy(() => ContentBlockSchema));
 
+const NormalizedBlocksField = z.preprocess((val) => {
+  if (!Array.isArray(val)) return val;
+
+  // Keep valid blocks and drop malformed/null rows that can appear in M2A junctions.
+  return val
+    .map((item) => {
+      const parsed = SafeContentBlockSchema.safeParse(item);
+      return parsed.success ? parsed.data : null;
+    })
+    .filter((item): item is ContentBlock => item !== null);
+}, z.array(ContentBlockSchema).nullable().optional());
+
 export const TagSchema = z.object({
   id: DirectusIdSchema,
   name: z.string(),
@@ -256,7 +268,7 @@ export const ProjectSchema = z.object({
   tools_used: z.array(z.string()).nullable().optional(),
   github_repo: z.string().nullable().optional(),
   external_links: z.array(z.string()).nullable().optional(),
-  blocks: z.array(SafeContentBlockSchema).nullable().optional(),
+  blocks: NormalizedBlocksField,
   date_created: z.string().nullable().optional(),
   date_updated: z.string().nullable().optional(),
 });
