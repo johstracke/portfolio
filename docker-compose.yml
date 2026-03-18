@@ -11,8 +11,8 @@ services:
       NEXT_PUBLIC_DIRECTUS_URL: ${DIRECTUS_PUBLIC_URL:-http://localhost:8055}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
       DIRECTUS_URL: ${DIRECTUS_URL:-http://directus:8055}
-      DIRECTUS_EMAIL: ${ADMIN_EMAIL}
-      DIRECTUS_PASSWORD: ${ADMIN_PASSWORD}
+      DIRECTUS_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      DIRECTUS_PASSWORD: ${ADMIN_PASSWORD:-admin}
     depends_on:
       directus:
         condition: service_healthy
@@ -54,7 +54,13 @@ services:
       - directus_uploads:/directus/uploads
       - directus_extensions:/directus/extensions
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8055/server/health"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:8055/server/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 5s
       retries: 10
