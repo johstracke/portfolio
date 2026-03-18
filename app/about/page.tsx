@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: 'Personal story, context, and capabilities.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function AboutPage() {
   const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
   const recentProjects = projects.slice(0, 3);

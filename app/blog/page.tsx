@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: 'Posts about projects, learnings, and reflections.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function BlogPage() {
   const posts = await getBlogPosts();
 

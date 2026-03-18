@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: 'Current status, availability, and what I\'m working on.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function NowPage() {
   const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
   const activeProjects = projects.filter((project) => project.status === 'ongoing').slice(0, 3);

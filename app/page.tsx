@@ -9,6 +9,8 @@ export const metadata: Metadata = {
     'Portfolio showcasing hardware, software, automation, and sustainable systems.',
 };
 
+export const dynamic = 'force-dynamic';
+
 const WHAT_I_BUILD = [
   {
     label: 'Hardware',
