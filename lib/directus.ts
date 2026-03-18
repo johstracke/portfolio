@@ -60,8 +60,6 @@ const PROJECT_BASE_FIELDS = [
   'tools_used',
   'github_repo',
   'external_links',
-  'date_created',
-  'date_updated',
 ] as const;
 
 export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> {
