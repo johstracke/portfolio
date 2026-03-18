@@ -253,7 +253,12 @@ export async function getBlogPosts(limit = 20): Promise<BlogPost[]> {
     const cmsClient = await getCmsClient();
     const items = (await cmsClient.request(
       readItems('blog_posts', {
-        filter: { is_draft: { _eq: false } },
+        filter: {
+          _or: [
+            { is_draft: { _eq: false } },
+            { is_draft: { _null: true } },
+          ],
+        },
         fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
         sort: ['-published_date'],
         limit,
@@ -281,7 +286,13 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     const cmsClient = await getCmsClient();
     const items = (await cmsClient.request(
       readItems('blog_posts', {
-        filter: { slug: { _eq: slug }, is_draft: { _eq: false } },
+        filter: {
+          slug: { _eq: slug },
+          _or: [
+            { is_draft: { _eq: false } },
+            { is_draft: { _null: true } },
+          ],
+        },
         fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
         limit: 1,
       } as never)
@@ -305,7 +316,10 @@ export async function getBlogPostsForProject(projectId: string | number): Promis
     const items = (await cmsClient.request(
       readItems('blog_posts', {
         filter: {
-          is_draft: { _eq: false },
+          _or: [
+            { is_draft: { _eq: false } },
+            { is_draft: { _null: true } },
+          ],
           linked_projects: {
             projects_id: { id: { _eq: projectId } },
           },
