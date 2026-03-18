@@ -17,8 +17,8 @@ cp .env.example .env.local
 # 3. Start Directus + PostgreSQL
 docker compose up -d postgres directus
 
-# 4. Initialize Directus schema and start dev server
-npm run directus:setup
+# 4. Bootstrap Directus (schema + permissions) and start dev server
+npm run directus:bootstrap
 npm run dev
 ```
 
@@ -95,7 +95,8 @@ lib/
 └── utils.ts           # Helpers (formatDate, getAssetUrl, etc.)
 
 scripts/
-└── directus-schema-setup.ts  # Canonical schema provisioning script
+├── directus-setup.sh         # Snapshot apply helper (with idempotency fallback)
+└── directus-post-setup.ts    # Public read permission bootstrap
 
 types/
 └── index.ts           # TypeScript type definitions
@@ -109,8 +110,10 @@ types/
 | `npm run build` | Build for production + static generation |
 | `npm start` | Run production server |
 | `npm run lint` | Check TypeScript and ESLint |
-| `npm run directus:setup` | Initialize Directus schema (M2A blocks, relations) |
-| `npm run directus:snapshot` | Export current Directus schema to JSON |
+| `npm run directus:setup` | Apply schema snapshot into Directus |
+| `npm run directus:permissions` | Ensure required public read permissions exist |
+| `npm run directus:bootstrap` | Run setup + permissions for a fresh instance |
+| `npm run directus:snapshot` | Export current Directus schema to YAML |
 
 ## Environment Variables
 
@@ -123,7 +126,7 @@ Copy [.env.example](./.env.example) to `.env.local` (development) or `.env` (pro
 ### Directus API (For Next.js Data Fetching)
 - **`DIRECTUS_URL`** – Internal Directus URL (e.g., `http://directus:8055` inside Docker, or `http://localhost:8055` locally). Used by Next.js to fetch projects, blog posts, and profile data.
 - **`DIRECTUS_STATIC_TOKEN`** – (Optional) Static API token for headless API access. Skips login overhead. If set, `DIRECTUS_EMAIL` and `DIRECTUS_PASSWORD` are ignored.
-- **`DIRECTUS_EMAIL`** / **`DIRECTUS_PASSWORD`** – Admin account credentials. Used by schema setup script (`npm run directus:setup`) and as fallback for data fetching if no static token is set. **Must match the admin user created in Directus.**
+- **`DIRECTUS_EMAIL`** / **`DIRECTUS_PASSWORD`** – Admin account credentials. Used by setup/permissions scripts and as fallback for data fetching if no static token is set. **Must match the admin user created in Directus.**
 
 ### Directus Server (Docker)
 - **`KEY`** – Random 32+ character string for session encryption. Generate: `openssl rand -base64 32`

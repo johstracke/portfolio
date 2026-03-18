@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "directus:setup": "docker cp ./directus-schema.snapshot.yaml portfolio_directus:/directus/directus-schema.snapshot.yaml && docker exec portfolio_directus npx directus schema apply ./directus-schema.snapshot.yaml --yes",
+    "directus:setup": "bash ./scripts/directus-setup.sh",
+    "directus:permissions": "npx tsx scripts/directus-post-setup.ts",
+    "directus:bootstrap": "npm run directus:setup && npm run directus:permissions",
     "directus:snapshot": "docker exec portfolio_directus sh -lc \"npx directus schema snapshot /tmp/directus-schema.snapshot.yaml --yes\" && docker cp portfolio_directus:/tmp/directus-schema.snapshot.yaml ./directus-schema.snapshot.yaml"
   },
   "dependencies": {
