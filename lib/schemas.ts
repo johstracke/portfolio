@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || process.env.DIRECTUS_URL || '';
+// Prefer server-side internal URL when available (e.g. http://directus:8055 in Docker).
+// Fall back to public URL for browser-only contexts.
+const DIRECTUS_URL = process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || '';
 const DirectusIdSchema = z.union([z.string(), z.number()]);
 
 export const TextBlockContentSchema = z.object({
