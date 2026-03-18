@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "directus:setup": "docker cp ./directus-schema.snapshot.yaml portfolio_directus:/directus/directus-schema.snapshot.yaml && docker exec portfolio_directus npx directus schema apply ./directus-schema.snapshot.yaml --yes",
-    "directus:snapshot": "docker exec portfolio_directus npx directus schema snapshot ./directus-schema.snapshot.yaml --yes && docker cp portfolio_directus:/directus/directus-schema.snapshot.yaml ./directus-schema.snapshot.yaml"
+    "directus:snapshot": "docker exec portfolio_directus sh -lc \"npx directus schema snapshot /tmp/directus-schema.snapshot.yaml --yes\" && docker cp portfolio_directus:/tmp/directus-schema.snapshot.yaml ./directus-schema.snapshot.yaml"
   },
   "dependencies": {
     "@directus/sdk": "^17.0.0",
