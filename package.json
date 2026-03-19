@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "tsx --test",
     "directus:setup": "bash ./scripts/directus-setup.sh",
     "directus:permissions": "npx tsx scripts/directus-post-setup.ts",
     "directus:bootstrap": "npm run directus:setup && npm run directus:permissions",
