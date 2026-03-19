@@ -1,5 +1,12 @@
 import type { Metadata } from 'next';
 import { getProjects } from '@/lib/directus';
+import {
+  countActiveProjectFilters,
+  deriveProjectFacets,
+  filterProjects,
+  normalizeProjectFilters,
+  type ProjectSearchParams,
+} from '@/lib/project-filters';
 import { FilterSidebar } from '@/components/filters/filter-sidebar';
 import { SearchBar } from '@/components/filters/search-bar';
 import { ProjectCard } from '@/components/cards/project-card';
@@ -10,49 +17,16 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{
-    domain?: string;
-    tag?: string;
-    status?: string;
-    context?: string;
-    search?: string;
-  }>;
+  searchParams?: Promise<ProjectSearchParams>;
 };
 
 export default async function ProjectsPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const [allProjects, filteredProjects] = await Promise.all([
-    getProjects(),
-    getProjects({
-      domain: params.domain,
-      tag: params.tag,
-      status: params.status,
-      context: params.context,
-      search: params.search,
-    }),
-  ]);
-
-  const domains = Array.from(
-    new Set(allProjects.flatMap((project) => project.domains ?? []))
-  ).sort();
-  const statuses = Array.from(new Set(allProjects.map((project) => project.status))).sort();
-  const tags = Array.from(
-    new Map(
-      allProjects
-        .flatMap((project) => project.tags ?? [])
-        .map((tag) => [tag.slug, { label: tag.name, value: tag.slug }])
-    ).values()
-  ).sort((left, right) => left.label.localeCompare(right.label));
-  const contexts = Array.from(
-    new Set(
-      allProjects
-        .map((p) => p.context)
-        .filter((c) => c != null)
-        .map(String)
-    )
-  ).sort();
-  const activeFilters = [params.domain, params.status, params.tag, params.context, params.search]
-    .filter(Boolean).length;
+  const rawSearchParams = searchParams ? await searchParams : undefined;
+  const filters = normalizeProjectFilters(rawSearchParams);
+  const allProjects = await getProjects();
+  const filteredProjects = filterProjects(allProjects, filters);
+  const { domains, statuses, tags, contexts } = deriveProjectFacets(allProjects);
+  const activeFilters = countActiveProjectFilters(filters);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -61,7 +35,7 @@ export default async function ProjectsPage({ searchParams }: Props) {
         <p className="mb-5 max-w-2xl text-ink/80">
           Browse hardware, software, automation, and interdisciplinary work.
         </p>
-        <SearchBar initialValue={params.search} />
+        <SearchBar initialValue={filters.search} />
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
@@ -70,10 +44,10 @@ export default async function ProjectsPage({ searchParams }: Props) {
           statuses={statuses}
           tags={tags}
           contexts={contexts}
-          selectedDomain={params.domain}
-          selectedStatus={params.status}
-          selectedTag={params.tag}
-          selectedContext={params.context}
+          selectedDomain={filters.domain}
+          selectedStatus={filters.status}
+          selectedTag={filters.tag}
+          selectedContext={filters.context}
         />
 
         <div>
