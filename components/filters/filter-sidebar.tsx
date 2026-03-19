@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useProjectQueryUpdater } from '@/components/filters/use-project-query-updater';
 
 type FilterOption = {
   label: string;
@@ -28,32 +28,7 @@ export function FilterSidebar({
   selectedTag,
   selectedContext,
 }: FilterSidebarProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  function updateParam(key: string, value: string) {
-    const nextParams = new URLSearchParams(searchParams.toString());
-
-    if (value) {
-      nextParams.set(key, value);
-    } else {
-      nextParams.delete(key);
-    }
-
-    const query = nextParams.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
-  }
-
-  function clearFilters() {
-    const nextParams = new URLSearchParams(searchParams.toString());
-    nextParams.delete('domain');
-    nextParams.delete('status');
-    nextParams.delete('tag');
-    nextParams.delete('context');
-    nextParams.delete('search');
-    router.push(pathname);
-  }
+  const { setFilter, clearFilters } = useProjectQueryUpdater();
 
   return (
     <aside className="space-y-5 border-[3px] border-black bg-surface p-5 shadow-brutal-sm">
@@ -68,7 +43,7 @@ export function FilterSidebar({
         <span className="mb-2 block text-sm font-bold uppercase text-ink/70">Domain</span>
         <select
           value={selectedDomain ?? ''}
-          onChange={(event) => updateParam('domain', event.target.value)}
+          onChange={(event) => setFilter('domain', event.target.value)}
           className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         >
           <option value="">All domains</option>
@@ -84,7 +59,7 @@ export function FilterSidebar({
         <span className="mb-2 block text-sm font-bold uppercase text-ink/70">Status</span>
         <select
           value={selectedStatus ?? ''}
-          onChange={(event) => updateParam('status', event.target.value)}
+          onChange={(event) => setFilter('status', event.target.value)}
           className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         >
           <option value="">All statuses</option>
@@ -100,7 +75,7 @@ export function FilterSidebar({
         <span className="mb-2 block text-sm font-bold uppercase text-ink/70">Tag</span>
         <select
           value={selectedTag ?? ''}
-          onChange={(event) => updateParam('tag', event.target.value)}
+          onChange={(event) => setFilter('tag', event.target.value)}
           className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         >
           <option value="">All tags</option>
@@ -117,7 +92,7 @@ export function FilterSidebar({
           <span className="mb-2 block text-sm font-bold uppercase text-ink/70">Context</span>
           <select
             value={selectedContext ?? ''}
-            onChange={(event) => updateParam('context', event.target.value)}
+            onChange={(event) => setFilter('context', event.target.value)}
             className="w-full border-[3px] border-black bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
           >
             <option value="">All contexts</option>

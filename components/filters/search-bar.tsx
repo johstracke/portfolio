@@ -1,31 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useProjectQueryUpdater } from '@/components/filters/use-project-query-updater';
 
 type SearchBarProps = {
   initialValue?: string;
 };
 
 export function SearchBar({ initialValue = '' }: SearchBarProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const { setFilter } = useProjectQueryUpdater();
   const [value, setValue] = useState(initialValue);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    const nextParams = new URLSearchParams(searchParams.toString());
-
-    if (value.trim()) {
-      nextParams.set('search', value.trim());
-    } else {
-      nextParams.delete('search');
-    }
-
-    const query = nextParams.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    setFilter('search', value);
   }
 
   return (
