@@ -3,18 +3,17 @@
 ## Quick Start (Local / Dev)
 
 ```bash
-cp .env.example .env.local
-# Edit .env.local with ADMIN_EMAIL, ADMIN_PASSWORD, etc.
+cp .env.example .env
+cp .env.local.example .env.local
+# Edit both files with matching credentials where needed
 
 # Start Directus only (Next.js runs locally)
-docker compose up -d postgres directus
+npm run dev:services
 
-# Apply schema and seed data
-npm run directus:schema
-# Upload at least one image in Directus UI, then:
-npm run directus:seed
+# Apply schema and permissions
+npm run directus:bootstrap
 
-# Run Next.js
+# Run Next.js on host
 npm run dev
 ```
 
@@ -58,5 +57,5 @@ npm run directus:setup
 - [ ] Domain DNS pointed to VPS (if using custom domain)
 - [ ] Firewall allows 80, 443, 22 (SSH)
 - [ ] At least one image uploaded in Directus (for project thumbnails)
-- [ ] Schema applied (`npm run directus:schema`)
-- [ ] Seed run (`npm run directus:seed`)
+- [ ] Schema + permissions applied (`npm run directus:bootstrap`)
+- [ ] Public read permissions verified (`npm run directus:permissions`)

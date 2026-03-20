@@ -10,14 +10,15 @@ git clone <your-repo>
 cd Portfolio
 npm install
 
-# 2. Set up environment
-cp .env.example .env.local
-# Edit .env.local with a strong DB_PASSWORD and admin credentials
+# 2. Set up both environment files
+cp .env.example .env
+cp .env.local.example .env.local
+# Edit .env and .env.local credentials to match your setup
 
-# 3. Start Directus + PostgreSQL
-docker compose up -d postgres directus
+# 3. Start Directus + PostgreSQL (Docker)
+npm run dev:services
 
-# 4. Bootstrap Directus (schema + permissions) and start dev server
+# 4. Bootstrap Directus (schema + permissions) and start frontend on host
 npm run directus:bootstrap
 npm run dev
 ```
@@ -49,8 +50,18 @@ Visit:
 ## Development
 
 ```bash
-# Start dev server (with hot reload)
+# Hybrid mode (recommended): Docker services + host Next.js
+npm run dev:services
 npm run dev
+
+# One-command hybrid start
+npm run dev:hybrid
+
+# Full Docker mode (frontend + directus + postgres)
+npm run dev:docker
+
+# Stop Docker services
+npm run dev:down
 
 # Type-check and build for production
 npm run build
@@ -106,7 +117,11 @@ types/
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | Start development server (Next.js + HMR) |
+| `npm run dev` | Start development server (Next.js + HMR on host) |
+| `npm run dev:services` | Start only PostgreSQL + Directus in Docker |
+| `npm run dev:hybrid` | Start PostgreSQL + Directus and then run Next.js on host |
+| `npm run dev:docker` | Start full stack in Docker (frontend + Directus + PostgreSQL) |
+| `npm run dev:down` | Stop Docker services |
 | `npm run build` | Build for production + static generation |
 | `npm start` | Run production server |
 | `npm run lint` | Check TypeScript and ESLint |
@@ -117,7 +132,9 @@ types/
 
 ## Environment Variables
 
-Copy [.env.example](./.env.example) to `.env.local` (development) or `.env` (production) and configure:
+Use two files for a smooth local workflow:
+- `.env` from [.env.example](./.env.example): Docker Compose variables
+- `.env.local` from [.env.local.example](./.env.local.example): host Next.js (`npm run dev`) variables
 
 ### Next.js (Frontend)
 - **`NEXT_PUBLIC_SITE_URL`** – Your site's public URL (e.g., `https://example.com` or `http://localhost:3000`). Used for sitemaps, Open Graph meta tags, and canonical URLs.
@@ -129,36 +146,50 @@ Copy [.env.example](./.env.example) to `.env.local` (development) or `.env` (pro
 - **`DIRECTUS_EMAIL`** / **`DIRECTUS_PASSWORD`** – Admin account credentials. Used by setup/permissions scripts and as fallback for data fetching if no static token is set. **Must match the admin user created in Directus.**
 
 ### Directus Server (Docker)
-- **`KEY`** – Random 32+ character string for session encryption. Generate: `openssl rand -base64 32`
-- **`SECRET`** – Random 32+ character string for token signing. Generate: `openssl rand -base64 32`
+- **`DIRECTUS_KEY`** – Random 32+ character string for session encryption. Generate: `openssl rand -base64 32`
+- **`DIRECTUS_SECRET`** – Random 32+ character string for token signing. Generate: `openssl rand -base64 32`
 - **`ADMIN_EMAIL`** – Initial admin email (created on first startup)
 - **`ADMIN_PASSWORD`** – Initial admin password (created on first startup)
-- **`PUBLIC_URL`** – Public Directus URL exposed to clients (same as `NEXT_PUBLIC_DIRECTUS_URL`)
+- **`DIRECTUS_PUBLIC_URL`** – Public Directus URL exposed to clients (same as `NEXT_PUBLIC_DIRECTUS_URL`)
 
 ### Database (PostgreSQL)
 - **`DB_USER`** – Postgres username (default: `directus`)
 - **`DB_PASSWORD`** – Postgres password. **Use a strong random value in production.** (Default in `.env.example` is placeholder.)
 - **`DB_NAME`** – Database name (default: `directus`)
 
-### Development vs. Production
+### Recommended Local Setup (Two Files)
 
-**Local Development (.env.local):**
+**Docker Compose (`.env`):**
 ```bash
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-DIRECTUS_URL=http://localhost:8055
 NEXT_PUBLIC_DIRECTUS_URL=http://localhost:8055
-DIRECTUS_EMAIL=admin@example.com
-DIRECTUS_PASSWORD=your_password_here
+DIRECTUS_PUBLIC_URL=http://localhost:8055
+DIRECTUS_URL=http://directus:8055
+DB_USER=directus
 DB_PASSWORD=your_secure_password_here
+DB_NAME=directus
 DIRECTUS_KEY=random-key-min-32-chars
 DIRECTUS_SECRET=random-secret-min-32-chars
+ADMIN_EMAIL=you@example.com
+ADMIN_PASSWORD=your_admin_password_here
 ```
 
-**Production (.env on VPS):**
+**Host Next.js (`.env.local`):**
+```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_DIRECTUS_URL=http://localhost:8055
+DIRECTUS_URL=http://localhost:8055
+DIRECTUS_STATIC_TOKEN=your_static_token_here
+DIRECTUS_EMAIL=admin@example.com
+DIRECTUS_PASSWORD=your_admin_password_here
+```
+
+**Production (`.env` on VPS):**
 ```bash
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 DIRECTUS_URL=http://directus:8055  # Internal Docker network
 NEXT_PUBLIC_DIRECTUS_URL=https://cms.your-domain.com
+DIRECTUS_PUBLIC_URL=https://cms.your-domain.com
 DIRECTUS_EMAIL=admin@your-domain.com
 DIRECTUS_PASSWORD=strong_random_password
 DB_PASSWORD=strong_random_password

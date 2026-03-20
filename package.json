@@ -4,6 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:services": "docker compose up -d postgres directus",
+    "dev:hybrid": "docker compose up -d postgres directus && next dev",
+    "dev:docker": "docker compose up -d --build",
+    "dev:down": "docker compose down",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
