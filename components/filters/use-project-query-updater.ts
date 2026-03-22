@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { getLocaleFromPathname, withLocalePath } from '@/lib/i18n';
 
 export const PROJECT_FILTER_KEYS = ['domain', 'status', 'tag', 'context', 'search'] as const;
 
@@ -11,13 +12,15 @@ export function useProjectQueryUpdater() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const locale = getLocaleFromPathname(pathname || '/');
 
   const pushParams = useCallback(
     (nextParams: URLSearchParams) => {
       const query = nextParams.toString();
-      router.push(query ? `${pathname}?${query}` : pathname);
+      const localizedPath = withLocalePath(locale, (pathname || '/').replace(/^\/(en|de)(?=\/|$)/, '') || '/');
+      router.push(query ? `${localizedPath}?${query}` : localizedPath);
     },
-    [pathname, router]
+    [locale, pathname, router]
   );
 
   const setFilter = useCallback(

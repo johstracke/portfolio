@@ -12,6 +12,7 @@ import {
   BlogPostSchema as BlogPostZod,
   ProfileSchema as ProfileZod,
 } from '@/lib/schemas';
+import { DEFAULT_LOCALE, type Locale, toDirectusLocale } from '@/lib/i18n';
 
 const DIRECTUS_URL = process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 const DIRECTUS_STATIC_TOKEN = process.env.DIRECTUS_STATIC_TOKEN;
@@ -160,9 +161,13 @@ const PROJECT_BLOCK_FIELDS = [
   'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_callout.callout_type',
 ] as const;
 
-export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> {
+export async function getProjects(
+  filters?: ProjectsFilter,
+  locale: Locale = DEFAULT_LOCALE
+): Promise<Project[]> {
   try {
     const cmsClient = await getCmsClient();
+    const directusLocale = toDirectusLocale(locale);
     const baseQuery: Record<string, unknown> = {
       fields: [
         ...PROJECT_BASE_FIELDS,
@@ -173,6 +178,7 @@ export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> 
         ...PROJECT_BLOCK_FIELDS,
       ],
       sort: ['-start_date'],
+      language: directusLocale,
     };
 
     const filterParts: Record<string, unknown> = {};
@@ -215,9 +221,13 @@ export async function getProjects(filters?: ProjectsFilter): Promise<Project[]> 
   }
 }
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
+export async function getProjectBySlug(
+  slug: string,
+  locale: Locale = DEFAULT_LOCALE
+): Promise<Project | null> {
   try {
     const cmsClient = await getCmsClient();
+    const directusLocale = toDirectusLocale(locale);
     const baseQuery: Record<string, unknown> = {
       filter: { slug: { _eq: slug } },
       fields: [
@@ -229,6 +239,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
         ...PROJECT_BLOCK_FIELDS,
       ],
       limit: 1,
+      language: directusLocale,
     };
 
     const items = (await cmsClient.request(
@@ -248,9 +259,13 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   }
 }
 
-export async function getBlogPosts(limit = 20): Promise<BlogPost[]> {
+export async function getBlogPosts(
+  limit = 20,
+  locale: Locale = DEFAULT_LOCALE
+): Promise<BlogPost[]> {
   try {
     const cmsClient = await getCmsClient();
+    const directusLocale = toDirectusLocale(locale);
     const items = (await cmsClient.request(
       readItems('blog_posts', {
         filter: {
@@ -262,6 +277,7 @@ export async function getBlogPosts(limit = 20): Promise<BlogPost[]> {
         fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
         sort: ['-published_date'],
         limit,
+        language: directusLocale,
       } as never)
     )) as unknown[];
 
@@ -281,9 +297,13 @@ export async function getBlogPosts(limit = 20): Promise<BlogPost[]> {
   }
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+export async function getBlogPostBySlug(
+  slug: string,
+  locale: Locale = DEFAULT_LOCALE
+): Promise<BlogPost | null> {
   try {
     const cmsClient = await getCmsClient();
+    const directusLocale = toDirectusLocale(locale);
     const items = (await cmsClient.request(
       readItems('blog_posts', {
         filter: {
@@ -295,6 +315,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
         },
         fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
         limit: 1,
+        language: directusLocale,
       } as never)
     )) as unknown[];
 
@@ -310,9 +331,13 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
   }
 }
 
-export async function getBlogPostsForProject(projectId: string | number): Promise<BlogPost[]> {
+export async function getBlogPostsForProject(
+  projectId: string | number,
+  locale: Locale = DEFAULT_LOCALE
+): Promise<BlogPost[]> {
   try {
     const cmsClient = await getCmsClient();
+    const directusLocale = toDirectusLocale(locale);
     const items = (await cmsClient.request(
       readItems('blog_posts', {
         filter: {
@@ -327,6 +352,7 @@ export async function getBlogPostsForProject(projectId: string | number): Promis
         fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
         sort: ['-published_date'],
         limit: 5,
+        language: directusLocale,
       } as never)
     )) as unknown[];
 
@@ -342,11 +368,14 @@ export async function getBlogPostsForProject(projectId: string | number): Promis
   }
 }
 
-export async function getProfile(): Promise<Profile | null> {
+export async function getProfile(locale: Locale = DEFAULT_LOCALE): Promise<Profile | null> {
   try {
     const cmsClient = await getCmsClient();
+    const directusLocale = toDirectusLocale(locale);
     const item = (await cmsClient.request(
-      readSingleton('profile' as never) as never
+      readSingleton('profile' as never, {
+        language: directusLocale,
+      } as never) as never
     )) as unknown;
     const result = ProfileZod.safeParse(item);
     if (result.success) return result.data;

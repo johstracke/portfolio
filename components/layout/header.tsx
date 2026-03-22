@@ -1,31 +1,43 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { getLocaleFromPathname, withLocalePath, type Locale } from '@/lib/i18n';
+import { t } from '@/lib/ui-translations';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
-  { href: '/now', label: 'Now' },
+  { href: '/', labelKey: 'nav.home' },
+  { href: '/projects', labelKey: 'nav.projects' },
+  { href: '/blog', labelKey: 'nav.blog' },
+  { href: '/about', labelKey: 'nav.about' },
+  { href: '/now', labelKey: 'nav.now' },
 ] as const;
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const locale = getLocaleFromPathname(pathname || '/');
 
   function isActive(href: string) {
-    if (href === '/') return pathname === '/';
-    return pathname.startsWith(href);
+    const localizedHref = withLocalePath(locale, href);
+    if (href === '/') return pathname === localizedHref;
+    return (pathname || '').startsWith(localizedHref);
+  }
+
+  function switchLocale(nextLocale: Locale) {
+    const currentPath = pathname || '/';
+    const withoutLocale = currentPath.replace(/^\/(en|de)(?=\/|$)/, '') || '/';
+    document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000`;
+    router.push(withLocalePath(nextLocale, withoutLocale));
   }
 
   return (
     <header className="border-b-[3px] border-black bg-surface">
-      <nav className="container mx-auto px-4 py-4 flex flex-wrap gap-4 sm:gap-6">
-        {NAV_LINKS.map(({ href, label }) => (
+      <nav className="container mx-auto px-4 py-4 flex flex-wrap items-center gap-4 sm:gap-6">
+        {NAV_LINKS.map(({ href, labelKey }) => (
           <Link
             key={href}
-            href={href}
+            href={withLocalePath(locale, href)}
             className={[
               'font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm',
               isActive(href)
@@ -33,9 +45,26 @@ export function Header() {
                 : 'hover:underline',
             ].join(' ')}
           >
-            {label}
+            {t(locale, labelKey)}
           </Link>
         ))}
+        <div className="ml-auto flex items-center gap-2 border-[3px] border-black px-2 py-1">
+          <span className="text-xs font-bold uppercase text-ink/70">{t(locale, 'language.label')}</span>
+          <button
+            type="button"
+            onClick={() => switchLocale('en')}
+            className={`px-2 py-1 text-xs font-bold uppercase ${locale === 'en' ? 'bg-black text-white' : 'hover:underline'}`}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            onClick={() => switchLocale('de')}
+            className={`px-2 py-1 text-xs font-bold uppercase ${locale === 'de' ? 'bg-black text-white' : 'hover:underline'}`}
+          >
+            DE
+          </button>
+        </div>
       </nav>
     </header>
   );

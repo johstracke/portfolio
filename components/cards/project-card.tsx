@@ -4,15 +4,17 @@ import type { Project } from '@/lib/directus';
 import { Badge } from '@/components/shared/badge';
 import { getAssetUrl } from '@/lib/schemas';
 import { formatDate } from '@/lib/utils';
+import { DEFAULT_LOCALE, type Locale, withLocalePath } from '@/lib/i18n';
 
 type Props = {
   project: Project;
+  locale?: Locale;
 };
 
-export function ProjectCard({ project }: Props) {
+export function ProjectCard({ project, locale = DEFAULT_LOCALE }: Props) {
   return (
     <Link
-      href={`/projects/${project.slug}`}
+      href={withLocalePath(locale, `/projects/${project.slug}`)}
       className="block border-[3px] border-black bg-surface shadow-brutal-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
     >
       <div className="relative aspect-video overflow-hidden border-b-[3px] border-black">
