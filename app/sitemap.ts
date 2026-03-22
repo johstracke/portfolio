@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getProjects, getBlogPosts } from '@/lib/directus';
+import { SUPPORTED_LOCALES, withLocalePath } from '@/lib/i18n';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 
@@ -9,27 +10,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getBlogPosts(100),
   ]);
 
-  const projectUrls = projects.map((p) => ({
-    url: `${SITE_URL}/projects/${p.slug}`,
-    lastModified: p.date_updated ? new Date(p.date_updated) : undefined,
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }));
+  const localizedStaticUrls: MetadataRoute.Sitemap = SUPPORTED_LOCALES.flatMap((locale) => [
+    { url: `${SITE_URL}${withLocalePath(locale, '/')}`, changeFrequency: 'weekly', priority: 1 },
+    { url: `${SITE_URL}${withLocalePath(locale, '/projects')}`, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${SITE_URL}${withLocalePath(locale, '/blog')}`, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${SITE_URL}${withLocalePath(locale, '/about')}`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE_URL}${withLocalePath(locale, '/now')}`, changeFrequency: 'weekly', priority: 0.8 },
+  ]);
 
-  const blogUrls = posts.map((p) => ({
-    url: `${SITE_URL}/blog/${p.slug}`,
-    lastModified: p.last_updated ? new Date(p.last_updated) : new Date(p.published_date),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  const projectUrls = SUPPORTED_LOCALES.flatMap((locale) =>
+    projects.map((p) => ({
+      url: `${SITE_URL}${withLocalePath(locale, `/projects/${p.slug}`)}`,
+      lastModified: p.date_updated ? new Date(p.date_updated) : undefined,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    }))
+  );
 
-  const staticUrls: MetadataRoute.Sitemap = [
-    { url: SITE_URL, changeFrequency: 'weekly', priority: 1 },
-    { url: `${SITE_URL}/projects`, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${SITE_URL}/blog`, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${SITE_URL}/about`, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${SITE_URL}/now`, changeFrequency: 'weekly', priority: 0.8 },
-  ];
+  const blogUrls = SUPPORTED_LOCALES.flatMap((locale) =>
+    posts.map((p) => ({
+      url: `${SITE_URL}${withLocalePath(locale, `/blog/${p.slug}`)}`,
+      lastModified: p.last_updated ? new Date(p.last_updated) : new Date(p.published_date),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
+  );
 
-  return [...staticUrls, ...projectUrls, ...blogUrls];
+  return [...localizedStaticUrls, ...projectUrls, ...blogUrls];
 }
