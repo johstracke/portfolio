@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { getLocaleFromPathname, withLocalePath, type Locale } from '@/lib/i18n';
 import { t } from '@/lib/ui-translations';
+
+const LOCALE_SWITCH_SCROLL_KEY = 'locale-switch-scroll-y';
 
 const NAV_LINKS = [
   { href: '/', labelKey: 'nav.home' },
@@ -15,8 +18,38 @@ const NAV_LINKS = [
 
 export function Header() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const locale = getLocaleFromPathname(pathname || '/');
+
+  useEffect(() => {
+    const pendingScroll = window.sessionStorage.getItem(LOCALE_SWITCH_SCROLL_KEY);
+    if (!pendingScroll) return;
+
+    const y = Number.parseInt(pendingScroll, 10);
+    if (Number.isNaN(y)) {
+      window.sessionStorage.removeItem(LOCALE_SWITCH_SCROLL_KEY);
+      return;
+    }
+
+    let attempts = 0;
+    const maxAttempts = 12;
+    const tryRestore = () => {
+      window.scrollTo({ top: y, behavior: 'auto' });
+      const delta = Math.abs(window.scrollY - y);
+      attempts += 1;
+
+      // Stop once we're close enough, or after a short retry window.
+      if (delta <= 2 || attempts >= maxAttempts) {
+        window.sessionStorage.removeItem(LOCALE_SWITCH_SCROLL_KEY);
+        return;
+      }
+
+      window.setTimeout(tryRestore, 60);
+    };
+
+    requestAnimationFrame(tryRestore);
+  }, [pathname, searchParams]);
 
   function isActive(href: string) {
     const localizedHref = withLocalePath(locale, href);
@@ -27,12 +60,15 @@ export function Header() {
   function switchLocale(nextLocale: Locale) {
     const currentPath = pathname || '/';
     const withoutLocale = currentPath.replace(/^\/(en|de)(?=\/|$)/, '') || '/';
+    const search = window.location.search || '';
+    const hash = window.location.hash || '';
+    window.sessionStorage.setItem(LOCALE_SWITCH_SCROLL_KEY, String(window.scrollY));
     document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000`;
-    router.push(withLocalePath(nextLocale, withoutLocale));
+    router.push(`${withLocalePath(nextLocale, withoutLocale)}${search}${hash}`, { scroll: false });
   }
 
   return (
-    <header className="border-b-[3px] border-black bg-surface">
+    <header className="sticky top-0 z-50 border-b-[3px] border-black bg-surface">
       <nav className="container mx-auto px-4 py-4 flex flex-wrap items-center gap-4 sm:gap-6">
         {NAV_LINKS.map(({ href, labelKey }) => (
           <Link

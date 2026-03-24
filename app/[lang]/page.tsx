@@ -78,9 +78,6 @@ export default async function HomePage({ params }: Props) {
     getBlogPosts(5, locale),
   ]);
   const featuredProjects = projects.slice(0, 3);
-  const heroBackground = featuredProjects[0]?.thumbnail
-    ? getAssetUrl(featuredProjects[0].thumbnail)
-    : '/mock-workshop-bg.svg';
   const heroCutouts = [
     {
       label: 'CNC PART',
@@ -115,17 +112,7 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <div className="container mx-auto px-4 py-10 md:py-14">
-      <section className="relative isolate overflow-hidden border-y-[3px] border-black py-6 md:py-8">
-        <Image
-          src={heroBackground}
-          alt="Workshop and project backdrop"
-          fill
-          priority
-          className="object-cover opacity-20"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-tr from-background/95 via-background/75 to-accent/20" />
-
+      <section className="relative isolate overflow-hidden py-6 md:py-8">
         <div className="relative mx-auto min-h-[320px] max-w-6xl px-1 md:min-h-[410px]">
           <div className="max-w-[42rem] border-[3px] border-black bg-surface/95 p-6 shadow-brutal backdrop-blur-sm md:p-8">
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-ink/70">Johannes Stracke</p>
