@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { getLocaleFromPathname, withLocalePath, type Locale } from '@/lib/i18n';
 import { t } from '@/lib/ui-translations';
@@ -18,7 +18,6 @@ const NAV_LINKS = [
 
 export function Header() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const locale = getLocaleFromPathname(pathname || '/');
 
@@ -49,7 +48,7 @@ export function Header() {
     };
 
     requestAnimationFrame(tryRestore);
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   function isActive(href: string) {
     const localizedHref = withLocalePath(locale, href);

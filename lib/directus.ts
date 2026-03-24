@@ -85,6 +85,85 @@ function applyTranslatedFields(
   return localized;
 }
 
+const PROJECT_BLOCK_TRANSLATABLE_FIELDS: Record<string, string[]> = {
+  project_blocks_text: ['content'],
+  project_blocks_image: ['caption'],
+  project_blocks_gallery: ['caption'],
+  project_blocks_video: ['caption'],
+  project_blocks_cad: ['description'],
+  project_blocks_code: ['description'],
+  project_blocks_specs: ['title'],
+  project_blocks_callout: ['content'],
+};
+
+function localizeProjectBlockEntry(
+  entry: unknown,
+  localeCode: 'en-US' | 'de-DE'
+): unknown {
+  if (!entry || typeof entry !== 'object') {
+    return entry;
+  }
+
+  const raw = entry as Record<string, unknown>;
+
+  // Handle Directus M2A shape: { collection, item }
+  if (typeof raw.collection === 'string' && raw.item && typeof raw.item === 'object') {
+    const collection = raw.collection;
+    const item = raw.item as Record<string, unknown>;
+    const fields = PROJECT_BLOCK_TRANSLATABLE_FIELDS[collection] ?? [];
+    let localizedItem = applyTranslatedFields(item, localeCode, fields) as Record<string, unknown>;
+
+    if (collection === 'project_blocks_layout') {
+      const leftBlocks = Array.isArray(localizedItem.left_blocks) ? localizedItem.left_blocks : [];
+      const rightBlocks = Array.isArray(localizedItem.right_blocks) ? localizedItem.right_blocks : [];
+      localizedItem = {
+        ...localizedItem,
+        left_blocks: leftBlocks.map((block) => localizeProjectBlockEntry(block, localeCode)),
+        right_blocks: rightBlocks.map((block) => localizeProjectBlockEntry(block, localeCode)),
+      };
+    }
+
+    return {
+      ...raw,
+      item: localizedItem,
+    };
+  }
+
+  // Handle already-normalized shape: { type, ... }
+  if (typeof raw.type === 'string') {
+    const collection = `project_blocks_${raw.type}`;
+    const fields = PROJECT_BLOCK_TRANSLATABLE_FIELDS[collection] ?? [];
+    const localized = applyTranslatedFields(raw, localeCode, fields) as Record<string, unknown>;
+
+    if (raw.type === 'layout') {
+      const leftBlocks = Array.isArray(localized.left_blocks) ? localized.left_blocks : [];
+      const rightBlocks = Array.isArray(localized.right_blocks) ? localized.right_blocks : [];
+      return {
+        ...localized,
+        left_blocks: leftBlocks.map((block) => localizeProjectBlockEntry(block, localeCode)),
+        right_blocks: rightBlocks.map((block) => localizeProjectBlockEntry(block, localeCode)),
+      };
+    }
+
+    return localized;
+  }
+
+  return raw;
+}
+
+function localizeProjectContent(item: unknown, localeCode: 'en-US' | 'de-DE'): unknown {
+  if (!item || typeof item !== 'object') {
+    return item;
+  }
+
+  const raw = item as Record<string, unknown>;
+  const blocks = Array.isArray(raw.blocks) ? raw.blocks : [];
+  return {
+    ...raw,
+    blocks: blocks.map((block) => localizeProjectBlockEntry(block, localeCode)),
+  };
+}
+
 function isTranslationsFieldError(error: unknown): boolean {
   if (!error || typeof error !== 'object') {
     return false;
@@ -96,7 +175,7 @@ function isTranslationsFieldError(error: unknown): boolean {
 }
 
 function stripTranslationSelectors(fields: readonly string[]): string[] {
-  return fields.filter((field) => !field.startsWith('translations.'));
+  return fields.filter((field) => !field.includes('.translations.') && !field.startsWith('translations.'));
 }
 
 const PROJECT_BASE_FIELDS = [
@@ -222,6 +301,33 @@ const PROJECT_BLOCK_FIELDS = [
   'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_callout.callout_type',
 ] as const;
 
+const PROJECT_BLOCK_TRANSLATION_FIELDS = [
+  'blocks.item:project_blocks_text.translations.*',
+  'blocks.item:project_blocks_image.translations.*',
+  'blocks.item:project_blocks_gallery.translations.*',
+  'blocks.item:project_blocks_video.translations.*',
+  'blocks.item:project_blocks_cad.translations.*',
+  'blocks.item:project_blocks_code.translations.*',
+  'blocks.item:project_blocks_specs.translations.*',
+  'blocks.item:project_blocks_callout.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_text.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_image.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_gallery.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_video.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_cad.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_code.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_specs.translations.*',
+  'blocks.item:project_blocks_layout.left_blocks.item:project_blocks_callout.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_text.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_image.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_gallery.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_video.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_cad.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_code.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_specs.translations.*',
+  'blocks.item:project_blocks_layout.right_blocks.item:project_blocks_callout.translations.*',
+] as const;
+
 export async function getProjects(
   filters?: ProjectsFilter,
   locale: Locale = DEFAULT_LOCALE
@@ -238,6 +344,7 @@ export async function getProjects(
         'tags.tags_id.slug',
         'tags.tags_id.color',
         ...PROJECT_BLOCK_FIELDS,
+        ...PROJECT_BLOCK_TRANSLATION_FIELDS,
       ],
       sort: ['-start_date'],
       language: directusLocale,
@@ -289,7 +396,8 @@ export async function getProjects(
         'short_summary',
         'duration',
       ]);
-      const parsed = ProjectZod.safeParse(localizedItem);
+      const localizedWithBlocks = localizeProjectContent(localizedItem, directusLocale);
+      const parsed = ProjectZod.safeParse(localizedWithBlocks);
       if (parsed.success) {
         results.push(parsed.data);
       } else {
@@ -320,6 +428,7 @@ export async function getProjectBySlug(
         'tags.tags_id.slug',
         'tags.tags_id.color',
         ...PROJECT_BLOCK_FIELDS,
+        ...PROJECT_BLOCK_TRANSLATION_FIELDS,
       ],
       limit: 1,
       language: directusLocale,
@@ -352,7 +461,8 @@ export async function getProjectBySlug(
       'short_summary',
       'duration',
     ]);
-    const result = ProjectZod.safeParse(localizedItem);
+    const localizedWithBlocks = localizeProjectContent(localizedItem, directusLocale);
+    const result = ProjectZod.safeParse(localizedWithBlocks);
     if (result.success) return result.data;
     console.error('[Directus] Project validation failed for slug:', slug, result.error.flatten());
     return null;
