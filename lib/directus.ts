@@ -87,6 +87,46 @@ function mergeWithFallback(data: unknown, fallbackData: unknown): unknown {
   return result as unknown;
 }
 
+function applyTranslatedFields(
+  item: unknown,
+  localeCode: 'en-US' | 'de-DE',
+  fields: string[],
+  fallbackLocaleCode: 'en-US' | 'de-DE' = 'en-US'
+): unknown {
+  if (!item || typeof item !== 'object') {
+    return item;
+  }
+
+  const source = item as Record<string, unknown>;
+  const translations = Array.isArray(source.translations)
+    ? (source.translations as Array<Record<string, unknown>>)
+    : [];
+
+  const currentTranslation = translations.find(
+    (translation) => translation?.languages_code === localeCode
+  );
+  const fallbackTranslation = translations.find(
+    (translation) => translation?.languages_code === fallbackLocaleCode
+  );
+
+  const localized = { ...source };
+  for (const field of fields) {
+    const translatedValue = currentTranslation?.[field];
+    const fallbackValue = fallbackTranslation?.[field];
+
+    if (translatedValue !== undefined && translatedValue !== null) {
+      localized[field] = translatedValue;
+      continue;
+    }
+
+    if (fallbackValue !== undefined && fallbackValue !== null) {
+      localized[field] = fallbackValue;
+    }
+  }
+
+  return localized;
+}
+
 const PROJECT_BASE_FIELDS = [
   'id',
   'title',
@@ -333,7 +373,20 @@ export async function getBlogPosts(
           { is_draft: { _null: true } },
         ],
       },
-      fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
+      fields: [
+        '*',
+        'tags.tags_id.id',
+        'tags.tags_id.name',
+        'tags.tags_id.slug',
+        'tags.tags_id.color',
+        'linked_projects.projects_id.id',
+        'linked_projects.projects_id.title',
+        'linked_projects.projects_id.slug',
+        'translations.languages_code',
+        'translations.title',
+        'translations.summary',
+        'translations.body',
+      ],
       sort: ['-published_date'],
       limit,
       language: directusLocale,
@@ -343,18 +396,10 @@ export async function getBlogPosts(
       readItems('blog_posts', query as never)
     )) as unknown[];
 
-    // For German, fetch English fallback and merge where values are null
-    if (locale === 'de') {
-      const enQuery = { ...query, language: 'en-US' };
-      const enItems = (await cmsClient.request(
-        readItems('blog_posts', enQuery as never)
-      )) as unknown[];
-      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
-    }
-
     const results: BlogPost[] = [];
     for (const item of items) {
-      const parsed = BlogPostZod.safeParse(item);
+      const localizedItem = applyTranslatedFields(item, directusLocale, ['title', 'summary', 'body']);
+      const parsed = BlogPostZod.safeParse(localizedItem);
       if (parsed.success) {
         results.push(parsed.data);
       } else {
@@ -383,7 +428,20 @@ export async function getBlogPostBySlug(
           { is_draft: { _null: true } },
         ],
       },
-      fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
+      fields: [
+        '*',
+        'tags.tags_id.id',
+        'tags.tags_id.name',
+        'tags.tags_id.slug',
+        'tags.tags_id.color',
+        'linked_projects.projects_id.id',
+        'linked_projects.projects_id.title',
+        'linked_projects.projects_id.slug',
+        'translations.languages_code',
+        'translations.title',
+        'translations.summary',
+        'translations.body',
+      ],
       limit: 1,
       language: directusLocale,
     };
@@ -392,18 +450,10 @@ export async function getBlogPostBySlug(
       readItems('blog_posts', query as never)
     )) as unknown[];
 
-    // For German, fetch English fallback and merge where values are null
-    if (locale === 'de') {
-      const enQuery = { ...query, language: 'en-US' };
-      const enItems = (await cmsClient.request(
-        readItems('blog_posts', enQuery as never)
-      )) as unknown[];
-      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
-    }
-
     const item = items[0];
     if (!item) return null;
-    const result = BlogPostZod.safeParse(item);
+    const localizedItem = applyTranslatedFields(item, directusLocale, ['title', 'summary', 'body']);
+    const result = BlogPostZod.safeParse(localizedItem);
     if (result.success) return result.data;
     console.error('[Directus] BlogPost validation failed for slug:', slug, result.error.flatten());
     return null;
@@ -430,7 +480,20 @@ export async function getBlogPostsForProject(
           projects_id: { id: { _eq: projectId } },
         },
       },
-      fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
+      fields: [
+        '*',
+        'tags.tags_id.id',
+        'tags.tags_id.name',
+        'tags.tags_id.slug',
+        'tags.tags_id.color',
+        'linked_projects.projects_id.id',
+        'linked_projects.projects_id.title',
+        'linked_projects.projects_id.slug',
+        'translations.languages_code',
+        'translations.title',
+        'translations.summary',
+        'translations.body',
+      ],
       sort: ['-published_date'],
       limit: 5,
       language: directusLocale,
@@ -440,18 +503,10 @@ export async function getBlogPostsForProject(
       readItems('blog_posts', query as never)
     )) as unknown[];
 
-    // For German, fetch English fallback and merge where values are null
-    if (locale === 'de') {
-      const enQuery = { ...query, language: 'en-US' };
-      const enItems = (await cmsClient.request(
-        readItems('blog_posts', enQuery as never)
-      )) as unknown[];
-      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
-    }
-
     const results: BlogPost[] = [];
     for (const item of items) {
-      const parsed = BlogPostZod.safeParse(item);
+      const localizedItem = applyTranslatedFields(item, directusLocale, ['title', 'summary', 'body']);
+      const parsed = BlogPostZod.safeParse(localizedItem);
       if (parsed.success) results.push(parsed.data);
     }
     return results;
