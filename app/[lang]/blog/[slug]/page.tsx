@@ -5,7 +5,7 @@ import { Badge } from '@/components/shared/badge';
 import { PlainTextContent } from '@/components/shared/plain-text-content';
 import { getBlogPostBySlug } from '@/lib/directus';
 import { formatDate } from '@/lib/utils';
-import { isLocale, withLocalePath } from '@/lib/i18n';
+import { isLocale, withLocalePath, SUPPORTED_LOCALES } from '@/lib/i18n';
 
 type Props = {
   params: Promise<{ lang: string; slug: string }>;
@@ -19,12 +19,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const post = await getBlogPostBySlug(slug, lang);
   if (!post) return {};
+
+  const alternates = Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, `https://johannesjohannes.de/${l}/blog/${slug}`])
+  );
+
   return {
     title: post.title,
     description: post.summary,
+    alternates: {
+      languages: alternates,
+      canonical: `https://johannesjohannes.de/${lang}/blog/${slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.summary,
+      url: `https://johannesjohannes.de/${lang}/blog/${slug}`,
+      locale: lang === 'de' ? 'de_DE' : 'en_US',
     },
   };
 }

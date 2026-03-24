@@ -5,12 +5,42 @@ import { Badge } from '@/components/shared/badge';
 import { Button } from '@/components/shared/button';
 import { getProfile, getProjects } from '@/lib/directus';
 import { formatDate } from '@/lib/utils';
-import { isLocale, withLocalePath } from '@/lib/i18n';
+import { isLocale, withLocalePath, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-export const metadata: Metadata = {
-  title: 'Now',
-  description: 'Current status, availability, and what I\'m working on.',
+const METADATA = {
+  en: {
+    title: 'Now',
+    description: 'Current status, availability, and what I\'m working on.',
+  },
+  de: {
+    title: 'Jetzt',
+    description: 'Aktueller Status, Verfügbarkeit und aktuelle Projekte.',
+  },
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = isLocale(lang) ? lang : 'en';
+  const meta = METADATA[locale] || METADATA.en;
+
+  const alternates = Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, `https://johannesjohannes.de/${l}/now`])
+  );
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: {
+      languages: alternates,
+      canonical: `https://johannesjohannes.de/${locale}/now`,
+    },
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      locale: locale === 'de' ? 'de_DE' : 'en_US',
+    },
+  };
+}
 
 export const dynamic = 'force-dynamic';
 

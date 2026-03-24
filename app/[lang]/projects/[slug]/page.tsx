@@ -7,7 +7,7 @@ import { BlockRenderer } from '@/components/blocks/block-renderer';
 import { Badge } from '@/components/shared/badge';
 import { getAssetUrl } from '@/lib/schemas';
 import { formatDate } from '@/lib/utils';
-import { isLocale, withLocalePath } from '@/lib/i18n';
+import { isLocale, withLocalePath, SUPPORTED_LOCALES } from '@/lib/i18n';
 
 type Props = {
   params: Promise<{ lang: string; slug: string }>;
@@ -21,12 +21,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const project = await getProjectBySlug(slug, lang);
   if (!project) return {};
+
+  const alternates = Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, `https://johannesjohannes.de/${l}/projects/${slug}`])
+  );
+
   return {
     title: project.title ?? '',
     description: project.short_summary ?? '',
+    alternates: {
+      languages: alternates,
+      canonical: `https://johannesjohannes.de/${lang}/projects/${slug}`,
+    },
     openGraph: {
       title: project.title ?? '',
       description: project.short_summary ?? '',
+      url: `https://johannesjohannes.de/${lang}/projects/${slug}`,
+      locale: lang === 'de' ? 'de_DE' : 'en_US',
       images: [{ url: getAssetUrl(project.thumbnail ?? undefined), alt: project.title ?? '' }],
     },
   };

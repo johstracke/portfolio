@@ -11,12 +11,42 @@ import {
 import { FilterSidebar } from '@/components/filters/filter-sidebar';
 import { SearchBar } from '@/components/filters/search-bar';
 import { ProjectCard } from '@/components/cards/project-card';
-import { isLocale, type Locale } from '@/lib/i18n';
+import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-export const metadata: Metadata = {
-  title: 'Projects',
-  description: 'Browse hardware, software, automation, and interdisciplinary work.',
+const METADATA = {
+  en: {
+    title: 'Projects',
+    description: 'Browse hardware, software, automation, and interdisciplinary work.',
+  },
+  de: {
+    title: 'Projekte',
+    description: 'Erkunden Sie Hardware-, Software-, Automatisierungs- und interdisziplinäre Projekte.',
+  },
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = isLocale(lang) ? lang : 'en';
+  const meta = METADATA[locale] || METADATA.en;
+
+  const alternates = Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, `https://johannesjohannes.de/${l}/projects`])
+  );
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: {
+      languages: alternates,
+      canonical: `https://johannesjohannes.de/${locale}/projects`,
+    },
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      locale: locale === 'de' ? 'de_DE' : 'en_US',
+    },
+  };
+}
 
 type Props = {
   params: Promise<{ lang: string }>;

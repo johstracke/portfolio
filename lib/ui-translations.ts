@@ -9,6 +9,24 @@ const messages = {
       about: 'About',
       now: 'Now',
     },
+    pages: {
+      projects: {
+        title: 'Projects',
+        description: 'Browse hardware, software, automation, and interdisciplinary work.',
+      },
+      blog: {
+        title: 'Blog',
+        description: 'Posts about projects, learnings, and reflections.',
+      },
+      about: {
+        title: 'About',
+        description: 'Personal story, context, and capabilities.',
+      },
+      now: {
+        title: 'Now',
+        description: 'Current status, availability, and what I\'m working on.',
+      },
+    },
     filters: {
       title: 'Filter Projects',
       subtitle: 'Refine by domain, status, and tag.',
@@ -36,8 +54,26 @@ const messages = {
       home: 'Startseite',
       projects: 'Projekte',
       blog: 'Blog',
-      about: 'Uber mich',
+      about: 'Über mich',
       now: 'Jetzt',
+    },
+    pages: {
+      projects: {
+        title: 'Projekte',
+        description: 'Erkunden Sie Hardware-, Software-, Automatisierungs- und interdisziplinäre Projekte.',
+      },
+      blog: {
+        title: 'Blog',
+        description: 'Beiträge über Projekte, Erkenntnisse und Überlegungen.',
+      },
+      about: {
+        title: 'Über mich',
+        description: 'Persönliche Geschichte, Kontext und Fähigkeiten.',
+      },
+      now: {
+        title: 'Jetzt',
+        description: 'Aktueller Status, Verfügbarkeit und aktuelle Projekte.',
+      },
     },
     filters: {
       title: 'Projekte filtern',
@@ -48,9 +84,9 @@ const messages = {
       context: 'Kontext',
       allDomains: 'Alle Bereiche',
       allStatuses: 'Alle Status',
-      allTags: 'Alle Schlagworter',
+      allTags: 'Alle Schlagwörter',
       allContexts: 'Alle Kontexte',
-      clear: 'Filter zurucksetzen',
+      clear: 'Filter zurücksetzen',
       searchPlaceholder: 'Nach Titel oder Zusammenfassung suchen',
       searchButton: 'Suchen',
     },

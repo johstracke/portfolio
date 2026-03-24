@@ -6,12 +6,35 @@ import { getProfile, getProjects, getBlogPosts } from '@/lib/directus';
 import { Button } from '@/components/shared/button';
 import { getAssetUrl } from '@/lib/schemas';
 import { formatDate } from '@/lib/utils';
-import { isLocale, type Locale, withLocalePath } from '@/lib/i18n';
+import { isLocale, type Locale, withLocalePath, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-export const metadata: Metadata = {
-  description:
-    'Portfolio showcasing hardware, software, automation, and sustainable systems.',
+const DESCRIPTIONS = {
+  en: 'Portfolio showcasing hardware, software, automation, and sustainable systems.',
+  de: 'Portfolio mit Projekten zu Hardware, Software, Automatisierung und nachhaltigen Systemen.',
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = lang as Locale;
+  const description = DESCRIPTIONS[locale] || DESCRIPTIONS.en;
+  const alternates = Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, `https://johannesjohannes.de/${l}`])
+  );
+
+  return {
+    description,
+    alternates: {
+      languages: {
+        ...alternates,
+        'x-default': 'https://johannesjohannes.de',
+      },
+      canonical: `https://johannesjohannes.de/${locale}`,
+    },
+    openGraph: {
+      locale: locale === 'de' ? 'de_DE' : 'en_US',
+    },
+  };
+}
 
 export const dynamic = 'force-dynamic';
 

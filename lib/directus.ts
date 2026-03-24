@@ -45,6 +45,48 @@ async function getCmsClient() {
   return cmsClient;
 }
 
+/**
+ * Recursively merge a data object with fallback data, filling null/undefined values.
+ * Deep merges nested objects and arrays.
+ */
+function mergeWithFallback(data: unknown, fallbackData: unknown): unknown {
+  // If primary data is null/undefined, use fallback
+  if (data === null || data === undefined) {
+    return fallbackData ?? null;
+  }
+
+  // Don't merge non-objects
+  if (typeof data !== 'object') {
+    return data;
+  }
+
+  // Handle arrays: merge each element with corresponding fallback element
+  if (Array.isArray(data)) {
+    return (data as unknown[]).map((item, idx) => {
+      const fbItem = Array.isArray(fallbackData) ? (fallbackData as unknown[])[idx] : undefined;
+      return mergeWithFallback(item, fbItem);
+    });
+  }
+
+  // Handle objects: recursively merge properties
+  const result = { ...data } as Record<string, unknown>;
+  const fb = fallbackData as Record<string, unknown> | null | undefined;
+
+  for (const key in result) {
+    if (result[key] === null || result[key] === undefined) {
+      // Replace null/undefined with fallback value
+      if (fb && key in fb) {
+        result[key] = fb[key];
+      }
+    } else if (typeof result[key] === 'object' && result[key] !== null && fb && key in fb) {
+      // Recursively merge nested objects
+      result[key] = mergeWithFallback(result[key], fb[key]);
+    }
+  }
+
+  return result as unknown;
+}
+
 const PROJECT_BASE_FIELDS = [
   'id',
   'title',
@@ -201,9 +243,18 @@ export async function getProjects(
       baseQuery.search = filters.search;
     }
 
-    const items = (await cmsClient.request(
+    let items = (await cmsClient.request(
       readItems('projects', baseQuery as never)
     )) as unknown[];
+
+    // For German, fetch English fallback and merge where values are null
+    if (locale === 'de') {
+      const enQuery = { ...baseQuery, language: 'en-US' };
+      const enItems = (await cmsClient.request(
+        readItems('projects', enQuery as never)
+      )) as unknown[];
+      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
+    }
 
     const results: Project[] = [];
     for (const item of items) {
@@ -242,9 +293,18 @@ export async function getProjectBySlug(
       language: directusLocale,
     };
 
-    const items = (await cmsClient.request(
+    let items = (await cmsClient.request(
       readItems('projects', baseQuery as never)
     )) as unknown[];
+
+    // For German, fetch English fallback and merge where values are null
+    if (locale === 'de') {
+      const enQuery = { ...baseQuery, language: 'en-US' };
+      const enItems = (await cmsClient.request(
+        readItems('projects', enQuery as never)
+      )) as unknown[];
+      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
+    }
 
     const item = items[0];
     if (!item) return null;
@@ -266,20 +326,31 @@ export async function getBlogPosts(
   try {
     const cmsClient = await getCmsClient();
     const directusLocale = toDirectusLocale(locale);
-    const items = (await cmsClient.request(
-      readItems('blog_posts', {
-        filter: {
-          _or: [
-            { is_draft: { _eq: false } },
-            { is_draft: { _null: true } },
-          ],
-        },
-        fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
-        sort: ['-published_date'],
-        limit,
-        language: directusLocale,
-      } as never)
+    const query: Record<string, unknown> = {
+      filter: {
+        _or: [
+          { is_draft: { _eq: false } },
+          { is_draft: { _null: true } },
+        ],
+      },
+      fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
+      sort: ['-published_date'],
+      limit,
+      language: directusLocale,
+    };
+
+    let items = (await cmsClient.request(
+      readItems('blog_posts', query as never)
     )) as unknown[];
+
+    // For German, fetch English fallback and merge where values are null
+    if (locale === 'de') {
+      const enQuery = { ...query, language: 'en-US' };
+      const enItems = (await cmsClient.request(
+        readItems('blog_posts', enQuery as never)
+      )) as unknown[];
+      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
+    }
 
     const results: BlogPost[] = [];
     for (const item of items) {
@@ -304,20 +375,31 @@ export async function getBlogPostBySlug(
   try {
     const cmsClient = await getCmsClient();
     const directusLocale = toDirectusLocale(locale);
-    const items = (await cmsClient.request(
-      readItems('blog_posts', {
-        filter: {
-          slug: { _eq: slug },
-          _or: [
-            { is_draft: { _eq: false } },
-            { is_draft: { _null: true } },
-          ],
-        },
-        fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
-        limit: 1,
-        language: directusLocale,
-      } as never)
+    const query: Record<string, unknown> = {
+      filter: {
+        slug: { _eq: slug },
+        _or: [
+          { is_draft: { _eq: false } },
+          { is_draft: { _null: true } },
+        ],
+      },
+      fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
+      limit: 1,
+      language: directusLocale,
+    };
+
+    let items = (await cmsClient.request(
+      readItems('blog_posts', query as never)
     )) as unknown[];
+
+    // For German, fetch English fallback and merge where values are null
+    if (locale === 'de') {
+      const enQuery = { ...query, language: 'en-US' };
+      const enItems = (await cmsClient.request(
+        readItems('blog_posts', enQuery as never)
+      )) as unknown[];
+      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
+    }
 
     const item = items[0];
     if (!item) return null;
@@ -338,23 +420,34 @@ export async function getBlogPostsForProject(
   try {
     const cmsClient = await getCmsClient();
     const directusLocale = toDirectusLocale(locale);
-    const items = (await cmsClient.request(
-      readItems('blog_posts', {
-        filter: {
-          _or: [
-            { is_draft: { _eq: false } },
-            { is_draft: { _null: true } },
-          ],
-          linked_projects: {
-            projects_id: { id: { _eq: projectId } },
-          },
+    const query: Record<string, unknown> = {
+      filter: {
+        _or: [
+          { is_draft: { _eq: false } },
+          { is_draft: { _null: true } },
+        ],
+        linked_projects: {
+          projects_id: { id: { _eq: projectId } },
         },
-        fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
-        sort: ['-published_date'],
-        limit: 5,
-        language: directusLocale,
-      } as never)
+      },
+      fields: ['*', 'tags.tags_id.id', 'tags.tags_id.name', 'tags.tags_id.slug', 'tags.tags_id.color', 'linked_projects.projects_id.id', 'linked_projects.projects_id.title', 'linked_projects.projects_id.slug'],
+      sort: ['-published_date'],
+      limit: 5,
+      language: directusLocale,
+    };
+
+    let items = (await cmsClient.request(
+      readItems('blog_posts', query as never)
     )) as unknown[];
+
+    // For German, fetch English fallback and merge where values are null
+    if (locale === 'de') {
+      const enQuery = { ...query, language: 'en-US' };
+      const enItems = (await cmsClient.request(
+        readItems('blog_posts', enQuery as never)
+      )) as unknown[];
+      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
+    }
 
     const results: BlogPost[] = [];
     for (const item of items) {
@@ -372,11 +465,22 @@ export async function getProfile(locale: Locale = DEFAULT_LOCALE): Promise<Profi
   try {
     const cmsClient = await getCmsClient();
     const directusLocale = toDirectusLocale(locale);
-    const item = (await cmsClient.request(
+    let item = (await cmsClient.request(
       readSingleton('profile' as never, {
         language: directusLocale,
       } as never) as never
     )) as unknown;
+
+    // For German, fetch English fallback and merge where values are null
+    if (locale === 'de') {
+      const enItem = (await cmsClient.request(
+        readSingleton('profile' as never, {
+          language: 'en-US',
+        } as never) as never
+      )) as unknown;
+      item = mergeWithFallback(item, enItem);
+    }
+
     const result = ProfileZod.safeParse(item);
     if (result.success) return result.data;
     console.error('[Directus] Profile validation failed:', result.error.flatten());

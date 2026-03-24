@@ -4,12 +4,42 @@ import { Badge } from '@/components/shared/badge';
 import { Button } from '@/components/shared/button';
 import { PlainTextContent } from '@/components/shared/plain-text-content';
 import { getProfile, getProjects } from '@/lib/directus';
-import { isLocale, withLocalePath } from '@/lib/i18n';
+import { isLocale, withLocalePath, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-export const metadata: Metadata = {
-  title: 'About',
-  description: 'Personal story, context, and capabilities.',
+const METADATA = {
+  en: {
+    title: 'About',
+    description: 'Personal story, context, and capabilities.',
+  },
+  de: {
+    title: 'Über mich',
+    description: 'Persönliche Geschichte, Kontext und Fähigkeiten.',
+  },
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = isLocale(lang) ? lang : 'en';
+  const meta = METADATA[locale] || METADATA.en;
+
+  const alternates = Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, `https://johannesjohannes.de/${l}/about`])
+  );
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: {
+      languages: alternates,
+      canonical: `https://johannesjohannes.de/${locale}/about`,
+    },
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      locale: locale === 'de' ? 'de_DE' : 'en_US',
+    },
+  };
+}
 
 export const dynamic = 'force-dynamic';
 

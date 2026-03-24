@@ -2,12 +2,42 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getBlogPosts } from '@/lib/directus';
 import { BlogCard } from '@/components/cards/blog-card';
-import { isLocale, type Locale } from '@/lib/i18n';
+import { isLocale, type Locale, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Posts about projects, learnings, and reflections.',
+const METADATA = {
+  en: {
+    title: 'Blog',
+    description: 'Posts about projects, learnings, and reflections.',
+  },
+  de: {
+    title: 'Blog',
+    description: 'Beiträge über Projekte, Erkenntnisse und Überlegungen.',
+  },
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = isLocale(lang) ? lang : 'en';
+  const meta = METADATA[locale] || METADATA.en;
+
+  const alternates = Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, `https://johannesjohannes.de/${l}/blog`])
+  );
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: {
+      languages: alternates,
+      canonical: `https://johannesjohannes.de/${locale}/blog`,
+    },
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      locale: locale === 'de' ? 'de_DE' : 'en_US',
+    },
+  };
+}
 
 export const dynamic = 'force-dynamic';
 
