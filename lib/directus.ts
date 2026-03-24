@@ -45,48 +45,6 @@ async function getCmsClient() {
   return cmsClient;
 }
 
-/**
- * Recursively merge a data object with fallback data, filling null/undefined values.
- * Deep merges nested objects and arrays.
- */
-function mergeWithFallback(data: unknown, fallbackData: unknown): unknown {
-  // If primary data is null/undefined, use fallback
-  if (data === null || data === undefined) {
-    return fallbackData ?? null;
-  }
-
-  // Don't merge non-objects
-  if (typeof data !== 'object') {
-    return data;
-  }
-
-  // Handle arrays: merge each element with corresponding fallback element
-  if (Array.isArray(data)) {
-    return (data as unknown[]).map((item, idx) => {
-      const fbItem = Array.isArray(fallbackData) ? (fallbackData as unknown[])[idx] : undefined;
-      return mergeWithFallback(item, fbItem);
-    });
-  }
-
-  // Handle objects: recursively merge properties
-  const result = { ...data } as Record<string, unknown>;
-  const fb = fallbackData as Record<string, unknown> | null | undefined;
-
-  for (const key in result) {
-    if (result[key] === null || result[key] === undefined) {
-      // Replace null/undefined with fallback value
-      if (fb && key in fb) {
-        result[key] = fb[key];
-      }
-    } else if (typeof result[key] === 'object' && result[key] !== null && fb && key in fb) {
-      // Recursively merge nested objects
-      result[key] = mergeWithFallback(result[key], fb[key]);
-    }
-  }
-
-  return result as unknown;
-}
-
 function applyTranslatedFields(
   item: unknown,
   localeCode: 'en-US' | 'de-DE',
@@ -127,6 +85,20 @@ function applyTranslatedFields(
   return localized;
 }
 
+function isTranslationsFieldError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const errors = (error as { errors?: Array<{ message?: string }> }).errors;
+  const message = errors?.[0]?.message;
+  return typeof message === 'string' && message.includes('translations');
+}
+
+function stripTranslationSelectors(fields: readonly string[]): string[] {
+  return fields.filter((field) => !field.startsWith('translations.'));
+}
+
 const PROJECT_BASE_FIELDS = [
   'id',
   'title',
@@ -143,6 +115,13 @@ const PROJECT_BASE_FIELDS = [
   'tools_used',
   'github_repo',
   'external_links',
+] as const;
+
+const PROJECT_TRANSLATION_FIELDS = [
+  'translations.languages_code',
+  'translations.title',
+  'translations.short_summary',
+  'translations.duration',
 ] as const;
 
 const PROJECT_BLOCK_FIELDS = [
@@ -253,6 +232,7 @@ export async function getProjects(
     const baseQuery: Record<string, unknown> = {
       fields: [
         ...PROJECT_BASE_FIELDS,
+        ...PROJECT_TRANSLATION_FIELDS,
         'tags.tags_id.id',
         'tags.tags_id.name',
         'tags.tags_id.slug',
@@ -283,22 +263,33 @@ export async function getProjects(
       baseQuery.search = filters.search;
     }
 
-    let items = (await cmsClient.request(
-      readItems('projects', baseQuery as never)
-    )) as unknown[];
-
-    // For German, fetch English fallback and merge where values are null
-    if (locale === 'de') {
-      const enQuery = { ...baseQuery, language: 'en-US' };
-      const enItems = (await cmsClient.request(
-        readItems('projects', enQuery as never)
+    let items: unknown[] = [];
+    try {
+      items = (await cmsClient.request(
+        readItems('projects', baseQuery as never)
       )) as unknown[];
-      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
+    } catch (error) {
+      if (!isTranslationsFieldError(error)) {
+        throw error;
+      }
+
+      const fallbackQuery = {
+        ...baseQuery,
+        fields: stripTranslationSelectors(baseQuery.fields as readonly string[]),
+      };
+      items = (await cmsClient.request(
+        readItems('projects', fallbackQuery as never)
+      )) as unknown[];
     }
 
     const results: Project[] = [];
     for (const item of items) {
-      const parsed = ProjectZod.safeParse(item);
+      const localizedItem = applyTranslatedFields(item, directusLocale, [
+        'title',
+        'short_summary',
+        'duration',
+      ]);
+      const parsed = ProjectZod.safeParse(localizedItem);
       if (parsed.success) {
         results.push(parsed.data);
       } else {
@@ -323,6 +314,7 @@ export async function getProjectBySlug(
       filter: { slug: { _eq: slug } },
       fields: [
         ...PROJECT_BASE_FIELDS,
+        ...PROJECT_TRANSLATION_FIELDS,
         'tags.tags_id.id',
         'tags.tags_id.name',
         'tags.tags_id.slug',
@@ -333,23 +325,34 @@ export async function getProjectBySlug(
       language: directusLocale,
     };
 
-    let items = (await cmsClient.request(
-      readItems('projects', baseQuery as never)
-    )) as unknown[];
-
-    // For German, fetch English fallback and merge where values are null
-    if (locale === 'de') {
-      const enQuery = { ...baseQuery, language: 'en-US' };
-      const enItems = (await cmsClient.request(
-        readItems('projects', enQuery as never)
+    let items: unknown[] = [];
+    try {
+      items = (await cmsClient.request(
+        readItems('projects', baseQuery as never)
       )) as unknown[];
-      items = items.map((item, idx) => mergeWithFallback(item, enItems[idx]));
+    } catch (error) {
+      if (!isTranslationsFieldError(error)) {
+        throw error;
+      }
+
+      const fallbackQuery = {
+        ...baseQuery,
+        fields: stripTranslationSelectors(baseQuery.fields as readonly string[]),
+      };
+      items = (await cmsClient.request(
+        readItems('projects', fallbackQuery as never)
+      )) as unknown[];
     }
 
     const item = items[0];
     if (!item) return null;
 
-    const result = ProjectZod.safeParse(item);
+    const localizedItem = applyTranslatedFields(item, directusLocale, [
+      'title',
+      'short_summary',
+      'duration',
+    ]);
+    const result = ProjectZod.safeParse(localizedItem);
     if (result.success) return result.data;
     console.error('[Directus] Project validation failed for slug:', slug, result.error.flatten());
     return null;
@@ -520,23 +523,41 @@ export async function getProfile(locale: Locale = DEFAULT_LOCALE): Promise<Profi
   try {
     const cmsClient = await getCmsClient();
     const directusLocale = toDirectusLocale(locale);
-    let item = (await cmsClient.request(
-      readSingleton('profile' as never, {
-        language: directusLocale,
-      } as never) as never
-    )) as unknown;
+    const baseQuery = {
+      fields: [
+        '*',
+        'translations.languages_code',
+        'translations.bio',
+        'translations.availability_status',
+      ],
+      language: directusLocale,
+    };
 
-    // For German, fetch English fallback and merge where values are null
-    if (locale === 'de') {
-      const enItem = (await cmsClient.request(
-        readSingleton('profile' as never, {
-          language: 'en-US',
-        } as never) as never
+    let item: unknown;
+    try {
+      item = (await cmsClient.request(
+        readSingleton('profile' as never, baseQuery as never) as never
       )) as unknown;
-      item = mergeWithFallback(item, enItem);
+    } catch (error) {
+      if (!isTranslationsFieldError(error)) {
+        throw error;
+      }
+
+      const fallbackQuery = {
+        ...baseQuery,
+        fields: stripTranslationSelectors(baseQuery.fields),
+      };
+      item = (await cmsClient.request(
+        readSingleton('profile' as never, fallbackQuery as never) as never
+      )) as unknown;
     }
 
-    const result = ProfileZod.safeParse(item);
+    const localizedItem = applyTranslatedFields(item, directusLocale, [
+      'bio',
+      'availability_status',
+    ]);
+
+    const result = ProfileZod.safeParse(localizedItem);
     if (result.success) return result.data;
     console.error('[Directus] Profile validation failed:', result.error.flatten());
     return null;
