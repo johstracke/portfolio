@@ -14,8 +14,11 @@
     "test": "tsx --test",
     "directus:setup": "bash ./scripts/directus-setup.sh",
     "directus:permissions": "npx tsx scripts/directus-post-setup.ts",
+    "directus:blocks:translations:one": "npx tsx scripts/setup-block-translations.ts",
+    "directus:blocks:translations:all": "npx tsx scripts/setup-block-translations-all.ts",
     "directus:bootstrap": "npm run directus:setup && npm run directus:permissions",
-    "directus:snapshot": "docker exec portfolio_directus sh -lc \"npx directus schema snapshot /tmp/directus-schema.snapshot.yaml --yes\" && docker cp portfolio_directus:/tmp/directus-schema.snapshot.yaml ./directus-schema.snapshot.yaml"
+    "directus:snapshot": "docker exec portfolio_directus sh -lc \"npx directus schema snapshot /tmp/directus-schema.snapshot.yaml --yes\" && docker cp portfolio_directus:/tmp/directus-schema.snapshot.yaml ./directus-schema.snapshot.yaml",
+    "directus:apply-snapshot": "docker cp ./directus-schema.snapshot.yaml portfolio_directus:/tmp/directus-schema.snapshot.yaml && docker exec portfolio_directus sh -lc \"npx directus schema apply /tmp/directus-schema.snapshot.yaml --yes\""
   },
   "dependencies": {
     "@directus/sdk": "^17.0.0",

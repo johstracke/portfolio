@@ -74,6 +74,54 @@ collections:
       versioning: false
     schema:
       name: blog_posts_tags
+  - collection: blog_posts_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: blog_posts_translations
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: import_export
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: blog_posts_translations
+  - collection: languages
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: languages
+      color: null
+      display_template: null
+      group: null
+      hidden: false
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: languages
   - collection: profile
     meta:
       accountability: all
@@ -98,6 +146,30 @@ collections:
       versioning: false
     schema:
       name: profile
+  - collection: profile_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: profile_translations
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: import_export
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: profile_translations
   - collection: project_blocks_cad
     meta:
       accountability: all
@@ -122,6 +194,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_cad
+  - collection: project_blocks_cad_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_cad_translations
+      color: null
+      display_template: '{{languages_code}} - {{description}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_cad_translations
   - collection: project_blocks_callout
     meta:
       accountability: all
@@ -146,6 +242,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_callout
+  - collection: project_blocks_callout_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_callout_translations
+      color: null
+      display_template: '{{languages_code}} - {{content}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_callout_translations
   - collection: project_blocks_code
     meta:
       accountability: all
@@ -170,6 +290,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_code
+  - collection: project_blocks_code_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_code_translations
+      color: null
+      display_template: '{{languages_code}} - {{description}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_code_translations
   - collection: project_blocks_gallery
     meta:
       accountability: all
@@ -218,6 +362,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_gallery_files
+  - collection: project_blocks_gallery_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_gallery_translations
+      color: null
+      display_template: '{{languages_code}} - {{caption}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_gallery_translations
   - collection: project_blocks_image
     meta:
       accountability: all
@@ -242,6 +410,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_image
+  - collection: project_blocks_image_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_image_translations
+      color: null
+      display_template: '{{languages_code}} - {{caption}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_image_translations
   - collection: project_blocks_layout
     meta:
       accountability: all
@@ -338,6 +530,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_specs
+  - collection: project_blocks_specs_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_specs_translations
+      color: null
+      display_template: '{{languages_code}} - {{title}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_specs_translations
   - collection: project_blocks_text
     meta:
       accountability: all
@@ -362,6 +578,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_text
+  - collection: project_blocks_text_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_text_translations
+      color: null
+      display_template: '{{languages_code}} - {{content}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_text_translations
   - collection: project_blocks_video
     meta:
       accountability: all
@@ -386,6 +626,30 @@ collections:
       versioning: false
     schema:
       name: project_blocks_video
+  - collection: project_blocks_video_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: project_blocks_video_translations
+      color: null
+      display_template: '{{languages_code}} - {{caption}}'
+      group: null
+      hidden: false
+      icon: translate
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: project_blocks_video_translations
   - collection: projects
     meta:
       accountability: all
@@ -458,6 +722,30 @@ collections:
       versioning: false
     schema:
       name: projects_tags
+  - collection: projects_translations
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: projects_translations
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: import_export
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: projects_translations
   - collection: tags
     meta:
       accountability: all
@@ -817,6 +1105,31 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: blog_posts
+    field: translations
+    type: alias
+    meta:
+      collection: blog_posts
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: null
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 10
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
   - collection: blog_posts_projects
     field: id
     type: integer
@@ -1057,6 +1370,377 @@ fields:
       has_auto_increment: false
       foreign_key_table: tags
       foreign_key_column: id
+  - collection: blog_posts_translations
+    field: id
+    type: integer
+    meta:
+      collection: blog_posts_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: blog_posts_translations
+      data_type: integer
+      default_value: nextval('blog_posts_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: blog_posts_translations
+    field: blog_posts_id
+    type: integer
+    meta:
+      collection: blog_posts_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: blog_posts_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: blog_posts_id
+      table: blog_posts_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: blog_posts
+      foreign_key_column: id
+  - collection: blog_posts_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: blog_posts_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: blog_posts_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: blog_posts_translations
+    field: title
+    type: string
+    meta:
+      collection: blog_posts_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: title
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: title
+      table: blog_posts_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: blog_posts_translations
+    field: summary
+    type: text
+    meta:
+      collection: blog_posts_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: summary
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: summary
+      table: blog_posts_translations
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: blog_posts_translations
+    field: body
+    type: text
+    meta:
+      collection: blog_posts_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: body
+      group: null
+      hidden: false
+      interface: input-rich-text-md
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: body
+      table: blog_posts_translations
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: languages
+    field: code
+    type: string
+    meta:
+      collection: languages
+      conditions: null
+      display: null
+      display_options: null
+      field: code
+      group: null
+      hidden: false
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: code
+      table: languages
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: languages
+    field: name
+    type: string
+    meta:
+      collection: languages
+      conditions: null
+      display: null
+      display_options: null
+      field: name
+      group: null
+      hidden: false
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: name
+      table: languages
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: languages
+    field: direction
+    type: string
+    meta:
+      collection: languages
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: $t:left_to_right
+            value: ltr
+          - text: $t:right_to_left
+            value: rtl
+        format: false
+      field: direction
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: $t:left_to_right
+            value: ltr
+          - text: $t:right_to_left
+            value: rtl
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: direction
+      table: languages
+      data_type: character varying
+      default_value: ltr
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: profile
     field: id
     type: integer
@@ -1499,6 +2183,231 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: profile
+    field: translations
+    type: alias
+    meta:
+      collection: profile
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: null
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 12
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: profile_translations
+    field: id
+    type: integer
+    meta:
+      collection: profile_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: profile_translations
+      data_type: integer
+      default_value: nextval('profile_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: profile_translations
+    field: profile_id
+    type: integer
+    meta:
+      collection: profile_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: profile_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: profile_id
+      table: profile_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: profile
+      foreign_key_column: id
+  - collection: profile_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: profile_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: profile_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: profile_translations
+    field: bio
+    type: text
+    meta:
+      collection: profile_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: bio
+      group: null
+      hidden: false
+      interface: input-rich-text-md
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: bio
+      table: profile_translations
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: profile_translations
+    field: availability_status
+    type: string
+    meta:
+      collection: profile_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: availability_status
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: availability_status
+      table: profile_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: project_blocks_cad
     field: id
     type: integer
@@ -1667,6 +2576,191 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: project_blocks_cad
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_cad
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: project_blocks_cad_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_cad_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_cad_translations
+      data_type: integer
+      default_value: nextval('project_blocks_cad_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_cad_translations
+    field: project_blocks_cad_id
+    type: integer
+    meta:
+      collection: project_blocks_cad_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: project_blocks_cad_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: project_blocks_cad_id
+      table: project_blocks_cad_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: project_blocks_cad
+      foreign_key_column: id
+  - collection: project_blocks_cad_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: project_blocks_cad_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: project_blocks_cad_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_cad_translations
+    field: description
+    type: text
+    meta:
+      collection: project_blocks_cad_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: description
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: Translated description
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: description
+      table: project_blocks_cad_translations
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: project_blocks_callout
     field: id
     type: integer
@@ -1785,6 +2879,191 @@ fields:
       data_type: character varying
       default_value: null
       max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_callout
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_callout
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: project_blocks_callout_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_callout_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_callout_translations
+      data_type: integer
+      default_value: nextval('project_blocks_callout_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_callout_translations
+    field: project_blocks_callout_id
+    type: integer
+    meta:
+      collection: project_blocks_callout_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: project_blocks_callout_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: project_blocks_callout_id
+      table: project_blocks_callout_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: project_blocks_callout
+      foreign_key_column: id
+  - collection: project_blocks_callout_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: project_blocks_callout_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: project_blocks_callout_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_callout_translations
+    field: content
+    type: text
+    meta:
+      collection: project_blocks_callout_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: content
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: Translated content
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: content
+      table: project_blocks_callout_translations
+      data_type: text
+      default_value: null
+      max_length: null
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -1996,6 +3275,191 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: project_blocks_code
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_code
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: project_blocks_code_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_code_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_code_translations
+      data_type: integer
+      default_value: nextval('project_blocks_code_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_code_translations
+    field: project_blocks_code_id
+    type: integer
+    meta:
+      collection: project_blocks_code_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: project_blocks_code_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: project_blocks_code_id
+      table: project_blocks_code_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: project_blocks_code
+      foreign_key_column: id
+  - collection: project_blocks_code_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: project_blocks_code_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: project_blocks_code_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_code_translations
+    field: description
+    type: text
+    meta:
+      collection: project_blocks_code_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: description
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: Translated description
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: description
+      table: project_blocks_code_translations
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: project_blocks_gallery
     field: id
     type: integer
@@ -2147,6 +3611,31 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: project_blocks_gallery
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_gallery
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
   - collection: project_blocks_gallery_files
     field: id
     type: integer
@@ -2187,11 +3676,51 @@ fields:
       has_auto_increment: true
       foreign_key_table: null
       foreign_key_column: null
-  - collection: project_blocks_gallery_files
+  - collection: project_blocks_gallery_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_gallery_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_gallery_translations
+      data_type: integer
+      default_value: nextval('project_blocks_gallery_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_gallery_translations
     field: project_blocks_gallery_id
     type: integer
     meta:
-      collection: project_blocks_gallery_files
+      collection: project_blocks_gallery_translations
       conditions: null
       display: null
       display_options: null
@@ -2212,7 +3741,7 @@ fields:
       width: full
     schema:
       name: project_blocks_gallery_id
-      table: project_blocks_gallery_files
+      table: project_blocks_gallery_translations
       data_type: integer
       default_value: null
       max_length: null
@@ -2227,15 +3756,15 @@ fields:
       has_auto_increment: false
       foreign_key_table: project_blocks_gallery
       foreign_key_column: id
-  - collection: project_blocks_gallery_files
-    field: directus_files_id
-    type: uuid
+  - collection: project_blocks_gallery_translations
+    field: languages_code
+    type: string
     meta:
-      collection: project_blocks_gallery_files
+      collection: project_blocks_gallery_translations
       conditions: null
       display: null
       display_options: null
-      field: directus_files_id
+      field: languages_code
       group: null
       hidden: true
       interface: null
@@ -2251,11 +3780,11 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: directus_files_id
-      table: project_blocks_gallery_files
-      data_type: uuid
+      name: languages_code
+      table: project_blocks_gallery_translations
+      data_type: character varying
       default_value: null
-      max_length: null
+      max_length: 255
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -2265,21 +3794,21 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: directus_files
-      foreign_key_column: id
-  - collection: project_blocks_gallery_files
-    field: sort
-    type: integer
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_gallery_translations
+    field: caption
+    type: string
     meta:
-      collection: project_blocks_gallery_files
+      collection: project_blocks_gallery_translations
       conditions: null
       display: null
       display_options: null
-      field: sort
+      field: caption
       group: null
-      hidden: true
-      interface: null
-      note: null
+      hidden: false
+      interface: input
+      note: Translated caption
       options: null
       readonly: false
       required: false
@@ -2291,13 +3820,13 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: sort
-      table: project_blocks_gallery_files
-      data_type: integer
+      name: caption
+      table: project_blocks_gallery_translations
+      data_type: character varying
       default_value: null
-      max_length: null
-      numeric_precision: 32
-      numeric_scale: 0
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
       is_nullable: true
       is_unique: false
       is_indexed: false
@@ -2463,6 +3992,191 @@ fields:
     schema:
       name: size
       table: project_blocks_image
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_image
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_image
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: project_blocks_image_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_image_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_image_translations
+      data_type: integer
+      default_value: nextval('project_blocks_image_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_image_translations
+    field: project_blocks_image_id
+    type: integer
+    meta:
+      collection: project_blocks_image_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: project_blocks_image_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: project_blocks_image_id
+      table: project_blocks_image_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: project_blocks_image
+      foreign_key_column: id
+  - collection: project_blocks_image_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: project_blocks_image_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: project_blocks_image_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_image_translations
+    field: caption
+    type: string
+    meta:
+      collection: project_blocks_image_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: caption
+      group: null
+      hidden: false
+      interface: input
+      note: Translated caption
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: caption
+      table: project_blocks_image_translations
       data_type: character varying
       default_value: null
       max_length: 255
@@ -3190,6 +4904,191 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: project_blocks_specs
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_specs
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: project_blocks_specs_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_specs_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_specs_translations
+      data_type: integer
+      default_value: nextval('project_blocks_specs_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_specs_translations
+    field: project_blocks_specs_id
+    type: integer
+    meta:
+      collection: project_blocks_specs_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: project_blocks_specs_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: project_blocks_specs_id
+      table: project_blocks_specs_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: project_blocks_specs
+      foreign_key_column: id
+  - collection: project_blocks_specs_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: project_blocks_specs_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: project_blocks_specs_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_specs_translations
+    field: title
+    type: string
+    meta:
+      collection: project_blocks_specs_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: title
+      group: null
+      hidden: false
+      interface: input
+      note: Translated title
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: title
+      table: project_blocks_specs_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: project_blocks_text
     field: id
     type: integer
@@ -3256,6 +5155,191 @@ fields:
     schema:
       name: content
       table: project_blocks_text
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_text
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_text
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: project_blocks_text_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_text_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_text_translations
+      data_type: integer
+      default_value: nextval('project_blocks_text_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_text_translations
+    field: project_blocks_text_id
+    type: integer
+    meta:
+      collection: project_blocks_text_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: project_blocks_text_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: project_blocks_text_id
+      table: project_blocks_text_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: project_blocks_text
+      foreign_key_column: id
+  - collection: project_blocks_text_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: project_blocks_text_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: project_blocks_text_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_text_translations
+    field: content
+    type: text
+    meta:
+      collection: project_blocks_text_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: content
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: Translated content
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: content
+      table: project_blocks_text_translations
       data_type: text
       default_value: null
       max_length: null
@@ -3419,6 +5503,191 @@ fields:
       data_type: boolean
       default_value: null
       max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_video
+    field: translations
+    type: alias
+    meta:
+      collection: project_blocks_video
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: Translations
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: project_blocks_video_translations
+    field: id
+    type: integer
+    meta:
+      collection: project_blocks_video_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: numeric
+      note: null
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: project_blocks_video_translations
+      data_type: integer
+      default_value: nextval('project_blocks_video_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: project_blocks_video_translations
+    field: project_blocks_video_id
+    type: integer
+    meta:
+      collection: project_blocks_video_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: project_blocks_video_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: project_blocks_video_id
+      table: project_blocks_video_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: project_blocks_video
+      foreign_key_column: id
+  - collection: project_blocks_video_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: project_blocks_video_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: project_blocks_video_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: project_blocks_video_translations
+    field: caption
+    type: string
+    meta:
+      collection: project_blocks_video_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: caption
+      group: null
+      hidden: false
+      interface: input
+      note: Translated caption
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: caption
+      table: project_blocks_video_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
       numeric_precision: null
       numeric_scale: null
       is_nullable: true
@@ -4109,6 +6378,31 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: projects
+    field: translations
+    type: alias
+    meta:
+      collection: projects
+      conditions: null
+      display: null
+      display_options: null
+      field: translations
+      group: null
+      hidden: false
+      interface: translations
+      note: null
+      options:
+        defaultLanguage: en-US
+      readonly: false
+      required: false
+      searchable: true
+      sort: 19
+      special:
+        - translations
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
   - collection: projects_blocks
     field: id
     type: integer
@@ -4429,6 +6723,286 @@ fields:
       has_auto_increment: false
       foreign_key_table: tags
       foreign_key_column: id
+  - collection: projects_translations
+    field: id
+    type: integer
+    meta:
+      collection: projects_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: projects_translations
+      data_type: integer
+      default_value: nextval('projects_translations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: projects_translations
+    field: projects_id
+    type: integer
+    meta:
+      collection: projects_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: projects_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: projects_id
+      table: projects_translations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: projects
+      foreign_key_column: id
+  - collection: projects_translations
+    field: languages_code
+    type: string
+    meta:
+      collection: projects_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: languages_code
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: languages_code
+      table: projects_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: languages
+      foreign_key_column: code
+  - collection: projects_translations
+    field: title
+    type: string
+    meta:
+      collection: projects_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: title
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: title
+      table: projects_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: projects_translations
+    field: short_summary
+    type: text
+    meta:
+      collection: projects_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: short_summary
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 6
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: short_summary
+      table: projects_translations
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: projects_translations
+    field: context
+    type: string
+    meta:
+      collection: projects_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: context
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: context
+      table: projects_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: projects_translations
+    field: duration
+    type: string
+    meta:
+      collection: projects_translations
+      conditions: null
+      display: null
+      display_options: null
+      field: duration
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: 7
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: duration
+      table: projects_translations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: tags
     field: id
     type: integer
@@ -4687,6 +7261,90 @@ relations:
       constraint_name: blog_posts_tags_tags_id_foreign
       on_update: NO ACTION
       on_delete: NO ACTION
+  - collection: blog_posts_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: blog_posts_id
+      many_collection: blog_posts_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: blog_posts_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: blog_posts_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: blog_posts_translations
+    field: blog_posts_id
+    related_collection: blog_posts
+    meta:
+      junction_field: languages_code
+      many_collection: blog_posts_translations
+      many_field: blog_posts_id
+      one_allowed_collections: null
+      one_collection: blog_posts
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: blog_posts_translations
+      column: blog_posts_id
+      foreign_key_table: blog_posts
+      foreign_key_column: id
+      constraint_name: blog_posts_translations_blog_posts_id_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: profile_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: profile_id
+      many_collection: profile_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: profile_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: profile_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: profile_translations
+    field: profile_id
+    related_collection: profile
+    meta:
+      junction_field: languages_code
+      many_collection: profile_translations
+      many_field: profile_id
+      one_allowed_collections: null
+      one_collection: profile
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: profile_translations
+      column: profile_id
+      foreign_key_table: profile
+      foreign_key_column: id
+      constraint_name: profile_translations_profile_id_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
   - collection: project_blocks_cad
     field: file_id
     related_collection: directus_files
@@ -4706,6 +7364,132 @@ relations:
       foreign_key_table: directus_files
       foreign_key_column: id
       constraint_name: project_blocks_cad_file_id_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_cad_translations
+    field: project_blocks_cad_id
+    related_collection: project_blocks_cad
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_cad_translations
+      many_field: project_blocks_cad_id
+      one_allowed_collections: null
+      one_collection: project_blocks_cad
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_cad_translations
+      column: project_blocks_cad_id
+      foreign_key_table: project_blocks_cad
+      foreign_key_column: id
+      constraint_name: project_blocks_cad_translations_project_bl__1912e0ab_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_cad_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_cad_id
+      many_collection: project_blocks_cad_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_cad_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_cad_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_callout_translations
+    field: project_blocks_callout_id
+    related_collection: project_blocks_callout
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_callout_translations
+      many_field: project_blocks_callout_id
+      one_allowed_collections: null
+      one_collection: project_blocks_callout
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_callout_translations
+      column: project_blocks_callout_id
+      foreign_key_table: project_blocks_callout
+      foreign_key_column: id
+      constraint_name: project_blocks_callout_translations_projec__7492add7_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_callout_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_callout_id
+      many_collection: project_blocks_callout_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_callout_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_callout_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_code_translations
+    field: project_blocks_code_id
+    related_collection: project_blocks_code
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_code_translations
+      many_field: project_blocks_code_id
+      one_allowed_collections: null
+      one_collection: project_blocks_code
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_code_translations
+      column: project_blocks_code_id
+      foreign_key_table: project_blocks_code
+      foreign_key_column: id
+      constraint_name: project_blocks_code_translations_project_bl__508d273_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_code_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_code_id
+      many_collection: project_blocks_code_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_code_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_code_translations_languages_code_foreign
       on_update: NO ACTION
       on_delete: NO ACTION
   - collection: project_blocks_gallery_files
@@ -4750,6 +7534,48 @@ relations:
       constraint_name: project_blocks_gallery_files_directus_files_id_foreign
       on_update: NO ACTION
       on_delete: NO ACTION
+  - collection: project_blocks_gallery_translations
+    field: project_blocks_gallery_id
+    related_collection: project_blocks_gallery
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_gallery_translations
+      many_field: project_blocks_gallery_id
+      one_allowed_collections: null
+      one_collection: project_blocks_gallery
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_gallery_translations
+      column: project_blocks_gallery_id
+      foreign_key_table: project_blocks_gallery
+      foreign_key_column: id
+      constraint_name: project_blocks_gallery_translations_projec__29455613_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_gallery_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_gallery_id
+      many_collection: project_blocks_gallery_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_gallery_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_gallery_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
   - collection: project_blocks_image
     field: image_id
     related_collection: directus_files
@@ -4769,6 +7595,48 @@ relations:
       foreign_key_table: directus_files
       foreign_key_column: id
       constraint_name: project_blocks_image_image_id_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_image_translations
+    field: project_blocks_image_id
+    related_collection: project_blocks_image
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_image_translations
+      many_field: project_blocks_image_id
+      one_allowed_collections: null
+      one_collection: project_blocks_image
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_image_translations
+      column: project_blocks_image_id
+      foreign_key_table: project_blocks_image
+      foreign_key_column: id
+      constraint_name: project_blocks_image_translations_project___6d0944bf_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_image_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_image_id
+      many_collection: project_blocks_image_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_image_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_image_translations_languages_code_foreign
       on_update: NO ACTION
       on_delete: NO ACTION
   - collection: project_blocks_layout_left
@@ -4839,6 +7707,132 @@ relations:
       one_deselect_action: nullify
       one_field: null
       sort_field: null
+  - collection: project_blocks_specs_translations
+    field: project_blocks_specs_id
+    related_collection: project_blocks_specs
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_specs_translations
+      many_field: project_blocks_specs_id
+      one_allowed_collections: null
+      one_collection: project_blocks_specs
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_specs_translations
+      column: project_blocks_specs_id
+      foreign_key_table: project_blocks_specs
+      foreign_key_column: id
+      constraint_name: project_blocks_specs_translations_project___4e66b4c7_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_specs_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_specs_id
+      many_collection: project_blocks_specs_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_specs_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_specs_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_text_translations
+    field: project_blocks_text_id
+    related_collection: project_blocks_text
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_text_translations
+      many_field: project_blocks_text_id
+      one_allowed_collections: null
+      one_collection: project_blocks_text
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_text_translations
+      column: project_blocks_text_id
+      foreign_key_table: project_blocks_text
+      foreign_key_column: id
+      constraint_name: project_blocks_text_translations_project_bl__1f6458d_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_text_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_text_id
+      many_collection: project_blocks_text_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_text_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_text_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_video_translations
+    field: project_blocks_video_id
+    related_collection: project_blocks_video
+    meta:
+      junction_field: languages_code
+      many_collection: project_blocks_video_translations
+      many_field: project_blocks_video_id
+      one_allowed_collections: null
+      one_collection: project_blocks_video
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: project_blocks_video_translations
+      column: project_blocks_video_id
+      foreign_key_table: project_blocks_video
+      foreign_key_column: id
+      constraint_name: project_blocks_video_translations_project_b__1fcbaff_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: project_blocks_video_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: project_blocks_video_id
+      many_collection: project_blocks_video_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: project_blocks_video_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: project_blocks_video_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
   - collection: projects
     field: thumbnail
     related_collection: directus_files
@@ -4945,3 +7939,45 @@ relations:
       constraint_name: projects_tags_tags_id_foreign
       on_update: NO ACTION
       on_delete: NO ACTION
+  - collection: projects_translations
+    field: languages_code
+    related_collection: languages
+    meta:
+      junction_field: projects_id
+      many_collection: projects_translations
+      many_field: languages_code
+      one_allowed_collections: null
+      one_collection: languages
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: projects_translations
+      column: languages_code
+      foreign_key_table: languages
+      foreign_key_column: code
+      constraint_name: projects_translations_languages_code_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: projects_translations
+    field: projects_id
+    related_collection: projects
+    meta:
+      junction_field: languages_code
+      many_collection: projects_translations
+      many_field: projects_id
+      one_allowed_collections: null
+      one_collection: projects
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: translations
+      sort_field: null
+    schema:
+      table: projects_translations
+      column: projects_id
+      foreign_key_table: projects
+      foreign_key_column: id
+      constraint_name: projects_translations_projects_id_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
